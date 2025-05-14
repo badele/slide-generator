@@ -8,7 +8,7 @@ seconds.
 ### blue_background
 
 ```bash
-set -a ; source profiles/blue_background ; set +a ; 
+set -a ; source profiles/devops_blue_background ; set +a ; 
 export TEXT3="SLIDE GENERATOR"
 export TEXT4="Generate clean, impactful slides"
 export TEXT5="for your social media posts in seconds"
@@ -20,7 +20,7 @@ export TEXT5="for your social media posts in seconds"
 ### img_background
 
 ```bash
-set -a ; source profiles/blue_background ; set +a ; 
+set -a ; source profiles/devops_blue_background ; set +a ; 
 export BACKGROUND_IMG="/home/badele/Pictures/2025-04-26_19-07.png"
 export TEXT3="SLIDE GENERATOR"
 export TEXT4="Generate clean, impactful slides"
@@ -33,7 +33,7 @@ export TEXT5="for your social media posts in seconds"
 ### img_with_text_background
 
 ```bash
-set -a ; source profiles/img_with_text_background ; set +a ; 
+set -a ; source profiles/devops_img_with_text_background ; set +a ; 
 export BACKGROUND_IMG="/home/badele/Pictures/2025-04-26_19-07.png"
 export TEXT3="SLIDE GENERATOR"
 export TEXT4="Generate clean, impactful slides"
