@@ -75,7 +75,7 @@ Example of using different parameters for the same profile
 
 ![img_background](./profiles/user_post/sample1.png)
 
-### Image with contrasted text
+#### Image with contrasted text
 
 ```bash
 ./generate_slide.sh --profile user_post \
@@ -89,6 +89,19 @@ Example of using different parameters for the same profile
 ```
 
 ![img_with_text_background](./profiles/user_post/sample2.png)
+
+### [bottom title block](./profiles/bottom_title_block/)
+
+```bash
+./generate_slide.sh --profile bottom_title_block \
+  --set COMMAND1="https://raw.githubusercontent.com/badele/vide/main/doc/img/plug_dashboard.png -resize x675  -gravity northwest -geometry +0+0 -composite" \
+  --set COMMAND2="-fill '#10701a'  -draw 'rectangle 0,422 1200,675'" \
+  --set TEXT5="VIM" \
+  --set TEXT6="Try it, you\'ll love it!" --set TEXT99_BG="'#10701a'" \
+  --set TEXT99="L'atelier" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#10701a' -border 12x0"
+```
+
+![result](./profiles/bottom_title_block/sample.png)
 
 ### Other examples
 
