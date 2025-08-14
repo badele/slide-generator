@@ -1,0 +1,16 @@
+# debug profile
+
+![result](./sample.png)
+
+```bash
+./generate_slide.sh --profile debug \
+  --set TEXT33="THE" \
+  --set TEXT33_EFFECTS_BEFORE="-stroke none" \
+  --set TEXT33_GEOMETRY="+0-64" \
+  --set TEXT34="debug" \
+  --set TEXT34_FG="#FFD300" \
+  --set TEXT34_FONT_SIZE=96 \
+  --set TEXT34_GEOMETRY="+0-0" \
+  --set TEXT35="profile" \
+  --set TEXT35_GEOMETRY="+0+64"
+```

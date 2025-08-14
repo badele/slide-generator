@@ -1,0 +1,39 @@
+# Bottom title block
+
+![result](./sample.png)
+
+```bash
+./generate_slide.sh --profile bottom_title_block \
+  --set COMMAND1="https://raw.githubusercontent.com/badele/vide/main/doc/img/plug_dashboard.png -resize x675  -gravity northwest -geometry +0+0 -composite" \
+  --set COMMAND2="-fill '#10701a'  -draw 'rectangle 0,422 1200,675'" \
+  --set TEXT5="VIM" \
+  --set TEXT6="Try it, you\'ll love it!" --set TEXT99_BG="'#10701a'" \
+  --set TEXT99="L'atelier" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#10701a' -border 12x0"
+```
+
+![result](./sample1.png)
+
+```bash
+./generate_slide.sh --profile bottom_title_block \
+  --set TEXT_FG="#000000" \
+  --set COMMAND1="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Pain_au_chocolat_Luc_Viatour.jpg/1280px-Pain_au_chocolat_Luc_Viatour.jpg -resize 1200x  -gravity northwest -geometry +0+0 -composite" \
+  --set COMMAND3="-stroke '#000000' -strokewidth 3 -draw 'line 0,422 1200,422'" \
+  --set COMMAND4="-stroke '#000000' -strokewidth 3 -draw 'line 0,635 1200,635'" \
+  --set COMMAND2="-fill 'gold'  -draw 'rectangle 0,422 1200,675'" \
+  --set TEXT5="pain au chococat ou chocolatine ?" \
+  --set TEXT5_FONT_SIZE=52 \
+  --set TEXT6="Et vous comment l'appelez vous" --set TEXT99_BG="gold" \
+  --set TEXT99="Le bar du coin" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor 'gold' -border 12x0"
+```
+
+![result](./sample2.png)
+
+```bash
+./generate_slide.sh --profile bottom_title_block \
+  --set COMMAND1="https://www.francebleu.fr/s3/cruiser-production-eu3/2025/08/910a2661-bdf1-4bc5-bb7c-214b50d1d2a3/1200x680_sc_loi-duplomb.jpg -resize 1200x  -gravity northwest -geometry +0+0 -composite" \
+  --set COMMAND2="-fill '#70101e'  -draw 'rectangle 0,422 1200,675'" \
+  --set TEXT5="Pétition contre la loi Duplomb" \
+  --set TEXT5_FONT_SIZE=52 \
+  --set TEXT6="Signez la pétition \!" --set TEXT99_BG="#70101e" \
+  --set TEXT99="La jerricane" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#70101e' -border 12x0"
+```

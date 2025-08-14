@@ -1,0 +1,30 @@
+#  vim: set ft=bash :
+
+# See profiles/minimal/config for default values
+
+# Default value
+BACKGROUND_COLOR="#104e70"
+OUTPUT_SIZE="1200x675"
+TEXT_GRAVITY="northwest"
+TEXT_FG="#FFFFFF"
+TEXT_FONT_SIZE=34
+
+COMMAND3="-stroke '#FFFFFF' -strokewidth 3 -draw 'line 0,422 1200,422'"
+COMMAND4="-stroke '#FFFFFF' -strokewidth 3 -draw 'line 0,635 1200,635'"
+
+TEXT5_FONT_SIZE=64
+TEXT5_EFFECTS_BEFORE="-stroke none"
+TEXT5_GRAVITY="north"
+TEXT5_GEOMETRY="+0+460"
+
+TEXT6_FONT_SIZE=64
+TEXT6_FONT_STYLE="NEXTART-Light"
+TEXT6_EFFECTS_BEFORE="-stroke none"
+TEXT6_GRAVITY="north"
+TEXT6_GEOMETRY="+0+520"
+
+TEXT99_FONT_SIZE=22
+TEXT99_GRAVITY="north"
+TEXT99_GEOMETRY="+0+626"
+
+

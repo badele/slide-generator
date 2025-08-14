@@ -1,0 +1,41 @@
+#  vim: set ft=bash :
+
+# See profiles/minimal/config for default values
+
+# step Y 80
+COMMAND1="-stroke gray20 -strokewidth 2 -draw 'line 80,0 80,675'"
+COMMAND2="-draw 'line 160,0 160,675'"
+COMMAND3="-draw 'line 240,0 240,675'"
+COMMAND4="-draw 'line 320,0 320,675'"
+COMMAND5="-draw 'line 400,0 400,675'"
+COMMAND6="-draw 'line 480,0 480,675'"
+COMMAND7="-draw 'line 560,0 560,675'"
+COMMAND8="-draw 'line 640,0 640,675'"
+COMMAND9="-draw 'line 720,0 720,675'"
+COMMAND10="-draw 'line 800,0 800,675'"
+COMMAND11="-draw 'line 880,0 880,675'"
+COMMAND12="-draw 'line 960,0 960,675'"
+COMMAND13="-draw 'line 1040,0 1040,675'"
+COMMAND14="-draw 'line 1120,0 1120,675'"
+COMMAND15="-draw 'line 1200,0 1200,675'"
+
+# step X 45
+COMMAND16="-draw 'line 0,45 1200,45'"
+COMMAND17="-draw 'line 0,90 1200,90'"
+COMMAND18="-draw 'line 0,135 1200,135'"
+COMMAND19="-draw 'line 0,180 1200,180'"
+COMMAND20="-draw 'line 0,225 1200,225'"
+COMMAND21="-draw 'line 0,270 1200,270'"
+COMMAND22="-draw 'line 0,315 1200,315'"
+COMMAND23="-draw 'line 0,360 1200,360'"
+COMMAND24="-draw 'line 0,405 1200,405'"
+COMMAND25="-draw 'line 0,450 1200,450'"
+COMMAND26="-draw 'line 0,495 1200,495'"
+COMMAND27="-draw 'line 0,540 1200,540'"
+COMMAND28="-draw 'line 0,585 1200,585'"
+COMMAND29="-draw 'line 0,630 1200,630'"
+COMMAND30="-draw 'line 0,675 1200,675'"
+
+# Centered
+COMMAND31="-stroke DeepPink4 -strokewidth 2 -draw 'line 600,0 600,675'"
+COMMAND32="-draw 'line 0,337.5 1200,337.5'"
