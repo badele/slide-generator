@@ -1,0 +1,20 @@
+#  vim: set ft=bash :
+
+# See profiles/minimal/config for default values
+
+# Default value
+BACKGROUND_COLOR="#104362"
+OUTPUT_SIZE="1200x675"
+TEXT_GRAVITY="northwest"
+TEXT_FG="#FFFFFF"
+TEXT_FONT_SIZE=34
+
+COMMAND2="-fill '#069B32CC' -draw 'rectangle 900,571 1200,675'"
+# COMMAND3="'(' -background none profiles/bottom_right_title_square/jerrycan-svgrepo-com.svg -resize x64 ')' -gravity northwest -geometry +1130+582 -compose dissolve -define compose:args=10 -composite"
+
+TEXT4="La"
+TEXT4_GEOMETRY="+920+581"
+
+TEXT5="Jerricane"
+TEXT5_GEOMETRY="+920+623"
+

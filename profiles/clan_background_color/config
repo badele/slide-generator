@@ -1,0 +1,33 @@
+#  vim: set ft=bash :
+
+# See profiles/minimal/config for default values
+
+# Default value
+BACKGROUND_COLOR="#253A3B"
+TEXT_GRAVITY="northwest"
+
+# Background image
+COMMAND1="https://clan.lol/images/clan-key-visual_hu_ae91ee65439ea040.webp -gravity northwest -geometry -300+0 -compose dissolve -define compose:args=05 -composite"
+
+# Texts
+TEXT2_BG="none"
+TEXT2_FG="#FFD300"
+TEXT2_FONT_SIZE=80
+TEXT2_GEOMETRY="+58+280"
+
+TEXT3_FG="#FFFFFF"
+TEXT3_GEOMETRY="+58+368"
+TEXT3_FONT_SIZE=46
+
+TEXT4_GEOMETRY="+58+460"
+TEXT4_FG="#2AEB6D"
+TEXT4_FONT_SIZE=29
+
+TEXT5_GEOMETRY="+58+490"
+TEXT5_FG="#2AEB6D"
+TEXT5_FONT_SIZE=29
+
+# Clan logo
+IMG99="profiles/clan_background_color/clan_logo.svg"
+IMG99_GRAVITY="northeast"
+IMG99_GEOMETRY="+20+20"

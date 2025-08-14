@@ -1,12 +1,48 @@
 {
   "nodes": {
+    "glsl-shader-effects": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "dir": "images/glsl-shader-effects",
+        "lastModified": 1754416703,
+        "narHash": "sha256-lFXJ7I4SDC1ES9XFeWB+5Tw/ADatrFHYHFGU751frqE=",
+        "owner": "badele",
+        "repo": "awesome-scripts",
+        "rev": "fcb35406757e34a76ccbd43a85f2ee8d15d1d675",
+        "type": "github"
+      },
+      "original": {
+        "dir": "images/glsl-shader-effects",
+        "owner": "badele",
+        "repo": "awesome-scripts",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1745526057,
-        "narHash": "sha256-ITSpPDwvLBZBnPRS2bUcHY3gZSwis/uTe255QgMtTLA=",
+        "lastModified": 1739214665,
+        "narHash": "sha256-26L8VAu3/1YRxS8MHgBOyOM8xALdo6N0I04PgorE7UM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "f771eb401a46846c1aebd20552521b233dd7e18b",
+        "rev": "64e75cd44acf21c7933d61d7721e812eac1b5a0a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1754214453,
+        "narHash": "sha256-Q/I2xJn/j1wpkGhWkQnm20nShYnG7TI99foDBpXm1SY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5b09dc45f24cf32316283e62aec81ffee3c3e376",
         "type": "github"
       },
       "original": {
@@ -18,7 +54,8 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "glsl-shader-effects": "glsl-shader-effects",
+        "nixpkgs": "nixpkgs_2"
       }
     }
   },

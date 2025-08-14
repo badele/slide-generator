@@ -1,0 +1,48 @@
+  #  vim: set ft=bash :
+
+  # list available font
+  # magick -list font
+
+  ###########################################################################
+  # Default values
+  ###########################################################################
+  
+  OUTPUT_SIZE="1200x675"
+  BACKGROUND_COLOR="none"
+
+  ###########################################################################
+  # Text default values
+  ###########################################################################
+  
+  TEXT_EFFECTS_BEFORE=""
+  # Add settings, before (background, font, pointsize, fill, caption)
+
+  TEXT_BG=""
+  # Define 'background' color for text
+
+  TEXT_FG="#FFFFFF"
+  # Define 'fill' color for text
+
+  TEXT_FONT_STYLE="NEXTART-Heavy"
+  # Define 'font' for text
+
+  TEXT_FONT_SIZE="64"
+  # Define 'pointsize' for text
+
+  TEXT_EFFECTS_AFTER="-trim"
+  # Add settings, after (background, font, pointsize, fill, caption)
+
+  TEXT_GEOMETRY="+0+0"
+  TEXT_GRAVITY="center"
+  TEXT_COMPOSITION="-compose over -composite"
+
+  ###########################################################################
+  # Img default values
+  ###########################################################################
+  
+  IMG_EFFECTS_BEFORE=""
+  IMG_BG="none"
+  IMG_EFFECTS_AFTER=""
+  IMG_GEOMETRY="+0+0"
+  IMG_GRAVITY="northwest"
+  IMG_COMPOSITION="-compose over -composite"
