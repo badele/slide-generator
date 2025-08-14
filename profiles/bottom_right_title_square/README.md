@@ -1,7 +1,6 @@
-```bash
-COMMAND2="-fill '#069B32CC' -draw 'rectangle 900,571 1200,675'"
-COMMAND3="'(' -background none https://www.svgrepo.com/download/322619/jerrycan.svg -resize x64 ')' -gravity northwest -geometry +1130+582 -compose dissolve -define compose:args=10 -composite"
-```
+# bottom right title square
+
+![result](./sample.png)
 
 ```bash
 ./generate_slide.sh --profile bottom_right_title_square \
@@ -24,6 +23,8 @@ COMMAND3="'(' -background none https://www.svgrepo.com/download/322619/jerrycan.
   --set TEXT8_GEOMETRY="+40+374" \
 ```
 
+![result](./sample1.png)
+
 ```bash
 ./generate_slide.sh --profile bottom_right_title_square \
   --set COMMAND2="-fill '#FFD300CC' -draw 'rectangle 900,571 1200,675'" \
@@ -39,8 +40,11 @@ COMMAND3="'(' -background none https://www.svgrepo.com/download/322619/jerrycan.
   --set TEXT7_FG="#FFFFFF" \
   --set TEXT7_FONT_SIZE=64 \
   --set TEXT7_GEOMETRY="+40+380" \
+```
 
+![result](./sample2.png)
 
+```bash
 ./generate_slide.sh --profile bottom_right_title_square \
   --set COMMAND2="-fill '#FF2900CC' -draw 'rectangle 900,571 1200,675'" \
   --set TEXT4="La" \
@@ -55,9 +59,4 @@ COMMAND3="'(' -background none https://www.svgrepo.com/download/322619/jerrycan.
   --set TEXT7_FG="#FFFFFF" \
   --set TEXT7_FONT_SIZE=64 \
   --set TEXT7_GEOMETRY="+40+380"
-
-
-./generate_slide.sh --profile bottom_right_title_square  --set TEXT4="Le" --set TEXT4_FG="#000000" --set TEXT5="Garage" --set TEXT5_FG="#000000" --set COMMAND2="-fill '#069B32CC' -draw 'rectangle 900,571 1200,675'" --set COMMAND3="'(' -background none https://www.svgrepo.com/download/308939/workshop-home-improvement-store-tool-shor-repair-shop.svg -resize x64 ')' -gravity northwest -geometry +1130+582 -compose dissolve -define compose:args=10 -composite"
-./generate_slide.sh --profile bottom_right_title_square  --set TEXT4="Le" --set TEXT4_FG="#000000" --set TEXT5="bar du coin" --set TEXT5_FG="#000000" --set COMMAND2="-fill '#FFD300CC' -draw 'rectangle 900,571 1200,675'" --set COMMAND3="'(' -background none https://www.svgrepo.com/download/322619/jerrycan.svg -resize x64 ')' -gravity northwest -geometry +1130+582 -compose dissolve -define compose:args=10 -composite"
-./generate_slide.sh --profile bottom_right_title_square  --set TEXT4="La" --set TEXT4_FG="#000000" --set TEXT5="Jerricane" --set TEXT5_FG="#000000" --set COMMAND2="-fill '#FFD300CC' -draw 'rectangle 900,571 1200,675'" --set COMMAND3="'(' -background none https://www.svgrepo.com/download/322619/jerrycan.svg -resize x64 ')' -gravity northwest -geometry +1130+582 -compose dissolve -define compose:args=10 -composite"
 ```

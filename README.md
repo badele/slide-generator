@@ -5,7 +5,7 @@ Generate clean, impactful slides for your social media posts in seconds.
 ## Usage
 
 The slide generator uses a simple CLI interface with profiles and customizable
-variables.
+variables. We can calling this **Slide As Code (SAC)**
 
 ### Basic syntax
 
