@@ -1,0 +1,31 @@
+# Configuration des tests pour le profil minimal (basé sur README.md)
+tests:
+  - name: "exemple minimal complet"
+    description: "Test basé sur l'exemple principal du README"
+    expected_files: ["output.png"]
+    command_args:
+      - "--set BACKGROUND_COLOR=#104362"
+      - "--set TEXT1=THE"
+      - "--set TEXT1_GEOMETRY=+0-64"
+      - "--set TEXT2=minimal"
+      - "--set TEXT2_FG=#FFD300"
+      - "--set TEXT2_FONT_SIZE=96"
+      - "--set TEXT2_GEOMETRY=+0-0"
+      - "--set TEXT3=profile"
+      - "--set TEXT3_GEOMETRY=+0+64"
+      
+  - name: "exemple avec SVG distant"
+    description: "Test avec image de fond SVG distante"
+    expected_files: ["output.png"]
+    command_args:
+      - "--set IMG_BACKGROUND=https://raw.githubusercontent.com/badele/slide-generator-templates/refs/heads/main/windows8_BSOD/template.svg"
+      - "--set TEXT1=Your PC ran into a problem that it couldn't"
+      - "--set TEXT2=handle and now it needs to restart"
+      - "--set TEXT3=You can search for the error online."
+      
+  - name: "test minimal simple"
+    description: "Test minimal avec paramètres de base"
+    expected_files: ["output.png"]
+    command_args:
+      - "--set TEXT1=Test"
+      - "--set TEXT2=Minimal"

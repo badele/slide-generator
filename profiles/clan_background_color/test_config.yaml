@@ -1,0 +1,26 @@
+# Configuration des tests pour le profil clan_background_color (basé sur README.md)
+tests:
+  - name: "exemple kill the cloud"
+    description: "Test basé sur l'exemple principal du README"
+    expected_files: ["output.png"]
+    command_args:
+      - "--set TEXT2=kill the cloud"
+      - "--set TEXT3=Build Your Own Darknet"
+      - "--set TEXT4=Discover the simplest way to re-enter independent computing"
+      - "--set TEXT5=with our framework. Placing control directly at your fingertips."
+      
+  - name: "test clan simple"
+    description: "Test clan basique avec textes courts"
+    expected_files: ["output.png"]
+    command_args:
+      - "--set TEXT2=Test Clan"
+      - "--set TEXT3=Simple Test"
+      
+  - name: "test clan avec style personnalisé"
+    description: "Test avec personnalisation avancée"
+    expected_files: ["output.png"]
+    command_args:
+      - "--set TEXT2=Elite Warriors"
+      - "--set TEXT3=Advanced Clan"
+      - "--set TEXT4=Join our community"
+      - "--set TEXT5=Experience next-level gaming"
