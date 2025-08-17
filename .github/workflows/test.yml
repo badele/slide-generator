@@ -15,18 +15,12 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Install Nix
-      uses: nixbuild/nix-quick-install-action@v28
+      uses: nixbuild/nix-quick-install-action@v32
       
-    - name: Enable Nix Flakes
-      run: |
-        echo "experimental-features = nix-command flakes" | sudo tee -a /etc/nix/nix.conf
-        
     - name: Setup Nix cache
-      uses: cachix/cachix-action@v15
+      uses: cachix/cachix-action@v16
       with:
         name: nixpkgs-unfree
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-        skipPush: true
         
     - name: Enter Nix development shell and run tests
       run: |
