@@ -22,6 +22,13 @@ jobs:
       with:
         name: nixpkgs-unfree
         
+    - name: Download and install Next Art font
+      run: |
+        mkdir -p $HOME/.local/share/fonts
+        curl -o nextart.zip "https://dl.dafont.com/dl/?f=next_art"
+        unzip nextart.zip -d $HOME/.local/share/fonts/
+        fc-cache -fv
+        
     - name: Enter Nix development shell and run tests
       run: |
         nix develop --command just test
