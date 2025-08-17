@@ -13,7 +13,7 @@ tests:
   - name: "exemple with background image"
     description: Test with background image
     command_args:
-      - --set IMG1="/home/badele/Pictures/2025-04-26_19-07.png"
+      - --set IMG1="resources/vim_vide_project.png"
       - --set TEXT2="DEVOPS"
       - --set TEXT3="BRUNO ADELÉ"
       - --set TEXT4="SLIDE GENERATOR"
@@ -24,7 +24,7 @@ tests:
   - name: "exemple with advanced text"
     description: Test with advanced text
     command_args:
-      - --set IMG1="/home/badele/Pictures/2025-04-26_19-07.png"
+      - --set IMG1="resources/vim_vide_project.png"
       - --set TEXT2="DEVOPS"
       - --set TEXT3="BRUNO ADELÉ"
       - --set TEXT4="SLIDE GENERATOR"

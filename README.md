@@ -64,7 +64,7 @@ Example of using different parameters for the same profile
 
 ```bash
 ./generate_slide.sh --profile user_post \
-  --set IMG1="/home/badele/Pictures/2025-04-26_19-07.png" \
+  --set IMG1="resources/vim_vide_project.png" \
   --set TEXT2="DEVOPS" \
   --set TEXT3="BRUNO ADELÉ" \
   --set TEXT4="SLIDE GENERATOR" \
@@ -79,7 +79,7 @@ Example of using different parameters for the same profile
 
 ```bash
 ./generate_slide.sh --profile user_post \
-  --set IMG1="/home/badele/Pictures/2025-04-26_19-07.png" \
+  --set IMG1="resources/vim_vide_project.png" \
   --set TEXT2="DEVOPS" \
   --set TEXT3="BRUNO ADELÉ" \
   --set TEXT4="SLIDE GENERATOR" \
