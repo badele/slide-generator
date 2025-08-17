@@ -1,6 +1,6 @@
 # bottom right title square
 
-![result](./sample.png)
+![result](./sample1.png)
 
 ```bash
 ./generate_slide.sh --profile bottom_right_title_square \
@@ -23,7 +23,7 @@
   --set TEXT8_GEOMETRY="+40+374" \
 ```
 
-![result](./sample1.png)
+![result](./sample2.png)
 
 ```bash
 ./generate_slide.sh --profile bottom_right_title_square \
@@ -42,14 +42,14 @@
   --set TEXT7_GEOMETRY="+40+380" \
 ```
 
-![result](./sample2.png)
+![result](./sample3.png)
 
 ```bash
 ./generate_slide.sh --profile bottom_right_title_square \
   --set COMMAND2="-fill '#FF2900CC' -draw 'rectangle 900,571 1200,675'" \
   --set TEXT4="La" \
   --set TEXT4_FG="#00000066" \
-  --set TEXT5="Jerricane" \
+  --set TEXT5="Barricade" \
   --set TEXT5_FG="#00000066" \
   --set TEXT6="Pétition contre la loi Duplomb" \
   --set TEXT6_FG="#FFD300" \

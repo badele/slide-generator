@@ -25,8 +25,9 @@
         buildInputs = with pkgs; [
           bash
           bats
-          yq
+          just
           pastel
+          yq
           glsl-shader-effects.packages.${system}.default
         ];
 
@@ -58,9 +59,10 @@
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           bats
-          yq
           imagemagick
+          just
           pastel
+          yq
           glsl-shader-effects.packages.${system}.default
         ];
       };

@@ -1,6 +1,6 @@
 # debug profile
 
-![result](./sample.png)
+![result](./sample1.png)
 
 ```bash
 ./generate_slide.sh --profile debug \
