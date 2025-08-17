@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install Nix
+      uses: nixbuild/nix-quick-install-action@v28
+      
+    - name: Enable Nix Flakes
+      run: |
+        echo "experimental-features = nix-command flakes" | sudo tee -a /etc/nix/nix.conf
+        
+    - name: Setup Nix cache
+      uses: cachix/cachix-action@v15
+      with:
+        name: nixpkgs-unfree
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        skipPush: true
+        
+    - name: Enter Nix development shell and run tests
+      run: |
+        nix develop --command just test
