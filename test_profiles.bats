@@ -5,12 +5,12 @@
 setup() {
     export ROOT_DIR="$(pwd)"
 
-    rm -f output.png test_output_*.png
+   echo  rm -f output.png test_output_*.png
 }
 
 teardown() {
     # Clean up after tests
-    rm -f output.png test_output_*.png
+echo    rm -f output.png test_output_*.png
 }
 
 get_profiles() {

@@ -35,7 +35,7 @@ echo "   Fichier: test_profiles.bats"
 echo ""
 
 # Exécuter les tests génériques
-if bats test_profiles.bats; then
+if bats --show-output-of-passing-tests test_profiles.bats; then
     echo ""
     echo "=================================================="
     echo -e "${GREEN}✅ Tous les tests sont passés avec succès!${NC}"

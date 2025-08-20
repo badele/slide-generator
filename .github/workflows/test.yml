@@ -1,4 +1,4 @@
-name: Tests
+name: unittests
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  unittests:
     runs-on: ubuntu-latest
     
     steps:

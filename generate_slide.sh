@@ -292,7 +292,7 @@ done
 
 # Output
 eval "magick ${cmd} output.png"
-echo "magick ${cmd} output.png"
+# echo "magick ${cmd} output.png"
 
 if [ -n "$POST_PROCESSING" ]; then
   eval "$POST_PROCESSING"
