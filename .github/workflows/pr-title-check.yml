@@ -1,0 +1,41 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  pr-title-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check PR title format
+      uses: amannn/action-semantic-pull-request@v5
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # Types autorisés selon tes commits
+        types: |
+          feat
+          fix
+          docs
+          style
+          refactor
+          perf
+          test
+          chore
+          ci
+          build
+          revert
+        requireScope: false
+        subjectPattern: '^.+$'
+        subjectPatternError: |
+         The title of the PR must follow the format of conventional commits.
+          
+          valid examples:
+          - feat: add new slide template
+          - fix: correct image generation bug
+          - docs: update README
+          - refactor: improve code structure
+        ignoreLabels: |
+          ignore-semantic-pull-request

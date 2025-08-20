@@ -28,6 +28,4 @@ TEXT5_FG="#2AEB6D"
 TEXT5_FONT_SIZE=29
 
 # Clan logo
-IMG99="profiles/clan_background_color/clan_logo.svg"
-IMG99_GRAVITY="northeast"
-IMG99_GEOMETRY="+20+20"
+COMMAND99="'(' -background none profiles/clan_background_color/clan_logo.svg -resize x54 ')' -gravity northeast -geometry +20+20 -composite"

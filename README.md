@@ -40,7 +40,7 @@ profiles with pre-filled parameters.
   --set TEXT3_GEOMETRY="+0+64"
 ```
 
-![minimal profile](./profiles/minimal/sample.png)
+![minimal profile](./profiles/minimal/sample1.png)
 
 ### [User post profile](./profiles/user_post/)
 
@@ -58,13 +58,13 @@ Example of using different parameters for the same profile
   --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/bruno_avatar_128.png"
 ```
 
-![user_post_blue_background](./profiles/user_post/sample.png)
+![user_post_blue_background](./profiles/user_post/sample1.png)
 
 #### Custom background image
 
 ```bash
 ./generate_slide.sh --profile user_post \
-  --set IMG1="/home/badele/Pictures/2025-04-26_19-07.png" \
+  --set IMG1="resources/vim_vide_project.png" \
   --set TEXT2="DEVOPS" \
   --set TEXT3="BRUNO ADELÉ" \
   --set TEXT4="SLIDE GENERATOR" \
@@ -73,13 +73,13 @@ Example of using different parameters for the same profile
   --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/bruno_avatar_128.png"
 ```
 
-![img_background](./profiles/user_post/sample1.png)
+![img_background](./profiles/user_post/sample2.png)
 
 #### Image with contrasted text
 
 ```bash
 ./generate_slide.sh --profile user_post \
-  --set IMG1="/home/badele/Pictures/2025-04-26_19-07.png" \
+  --set IMG1="resources/vim_vide_project.png" \
   --set TEXT2="DEVOPS" \
   --set TEXT3="BRUNO ADELÉ" \
   --set TEXT4="SLIDE GENERATOR" \
@@ -88,7 +88,7 @@ Example of using different parameters for the same profile
   --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/bruno_avatar_128.png"
 ```
 
-![img_with_text_background](./profiles/user_post/sample2.png)
+![img_with_text_background](./profiles/user_post/sample3.png)
 
 ### [bottom title block](./profiles/bottom_title_block/)
 
@@ -101,7 +101,7 @@ Example of using different parameters for the same profile
   --set TEXT99="L'atelier" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#10701a' -border 12x0"
 ```
 
-![result](./profiles/bottom_title_block/sample.png)
+![result](./profiles/bottom_title_block/sample1.png)
 
 ### Other examples
 
@@ -121,7 +121,7 @@ You can also replace text from a SVG file.
   --set TEXT3="You can search for the error online."
 ```
 
-![result](./profiles/minimal/sample1.png)
+![result](./profiles/minimal/sample2.png)
 
 ## Customization
 

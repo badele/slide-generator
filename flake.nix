@@ -24,7 +24,12 @@
 
         buildInputs = with pkgs; [
           bash
+          bats
+          fontconfig
+          just
           pastel
+          unzip
+          yq
           glsl-shader-effects.packages.${system}.default
         ];
 
@@ -55,8 +60,13 @@
       # nix develop
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
+          bats
+          fontconfig
           imagemagick
+          just
           pastel
+          unzip
+          yq
           glsl-shader-effects.packages.${system}.default
         ];
       };

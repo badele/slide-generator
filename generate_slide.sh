@@ -2,6 +2,8 @@
 
 # Mosaic generated with 'montage profiles/*/*.png -geometry x150+2+2 -background black +label mosaique.png'
 
+echo $*
+
 # Default value
 OUTPUT_SIZE="${OUTPUT_SIZE:-1200x675}"
 BACKGROUND_COLOR="${BACKGROUND_COLOR:-none}"
@@ -290,7 +292,7 @@ done
 
 # Output
 eval "magick ${cmd} output.png"
-echo "magick ${cmd} output.png"
+# echo "magick ${cmd} output.png"
 
 if [ -n "$POST_PROCESSING" ]; then
   eval "$POST_PROCESSING"

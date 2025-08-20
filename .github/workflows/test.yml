@@ -1,0 +1,27 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install Nix
+      uses: nixbuild/nix-quick-install-action@v32
+      
+    - name: Setup Nix cache
+      uses: cachix/cachix-action@v16
+      with:
+        name: nixpkgs-unfree
+        
+    - name: Enter Nix development shell and run tests
+      run: |
+        nix develop --command just test

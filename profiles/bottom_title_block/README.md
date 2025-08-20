@@ -1,17 +1,17 @@
 # Bottom title block
 
-![result](./sample.png)
+![result](./sample1.png)
 
 ```bash
 ./generate_slide.sh --profile bottom_title_block \
   --set COMMAND1="https://raw.githubusercontent.com/badele/vide/main/doc/img/plug_dashboard.png -resize x675  -gravity northwest -geometry +0+0 -composite" \
   --set COMMAND2="-fill '#10701a'  -draw 'rectangle 0,422 1200,675'" \
   --set TEXT5="VIM" \
-  --set TEXT6="Try it, you\'ll love it!" --set TEXT99_BG="'#10701a'" \
+  --set TEXT6="Try it, you\'ll love it\!" --set TEXT99_BG="'#10701a'" \
   --set TEXT99="L'atelier" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#10701a' -border 12x0"
 ```
 
-![result](./sample1.png)
+![result](./sample2.png)
 
 ```bash
 ./generate_slide.sh --profile bottom_title_block \
@@ -26,7 +26,7 @@
   --set TEXT99="Le bar du coin" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor 'gold' -border 12x0"
 ```
 
-![result](./sample2.png)
+![result](./sample3.png)
 
 ```bash
 ./generate_slide.sh --profile bottom_title_block \
@@ -35,5 +35,5 @@
   --set TEXT5="Pétition contre la loi Duplomb" \
   --set TEXT5_FONT_SIZE=52 \
   --set TEXT6="Signez la pétition \!" --set TEXT99_BG="#70101e" \
-  --set TEXT99="La jerricane" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#70101e' -border 12x0"
+  --set TEXT99="La barricade" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#70101e' -border 12x0"
 ```
