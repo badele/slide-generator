@@ -3,12 +3,14 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.glsl-shader-effects.url = "github:badele/awesome-scripts?dir=images/glsl-shader-effects";
+  inputs.tones-generator.url = "github:badele/awesome-scripts?dir=images/tones-generator";
 
   outputs =
     {
       self,
       nixpkgs,
       glsl-shader-effects,
+      tones-generator,
     }:
     let
       system = "x86_64-linux";
@@ -27,10 +29,13 @@
           bats
           fontconfig
           just
-          pastel
           unzip
           yq
           glsl-shader-effects.packages.${system}.default
+
+          # Colors
+          pastel
+          tones-generator.packages.${system}.default
         ];
 
         installPhase = ''
@@ -64,10 +69,14 @@
           fontconfig
           imagemagick
           just
-          pastel
+
           unzip
           yq
           glsl-shader-effects.packages.${system}.default
+
+          # Colors
+          pastel
+          tones-generator.packages.${system}.default
         ];
       };
     };

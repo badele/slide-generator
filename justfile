@@ -43,7 +43,7 @@ check-requirements:
 
 # Compute color tones
 @tones:
-    ./compute_tones.sh
+    cd resources &&tones-generator.sh gold 12 3
 
 # Run all profiles tests
 @test: check-requirements download-nextart-font

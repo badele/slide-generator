@@ -6,11 +6,11 @@
       },
       "locked": {
         "dir": "images/glsl-shader-effects",
-        "lastModified": 1754416703,
-        "narHash": "sha256-lFXJ7I4SDC1ES9XFeWB+5Tw/ADatrFHYHFGU751frqE=",
+        "lastModified": 1756407667,
+        "narHash": "sha256-bcFWqUIZBYwuAYUnhXNnA+5mZsHV5TPfOiBPmFtzQqA=",
         "owner": "badele",
         "repo": "awesome-scripts",
-        "rev": "fcb35406757e34a76ccbd43a85f2ee8d15d1d675",
+        "rev": "0c170c631080b6bb3f31fc25bba952a3d3846a9e",
         "type": "github"
       },
       "original": {
@@ -38,11 +38,27 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1754214453,
-        "narHash": "sha256-Q/I2xJn/j1wpkGhWkQnm20nShYnG7TI99foDBpXm1SY=",
+        "lastModified": 1756266583,
+        "narHash": "sha256-cr748nSmpfvnhqSXPiCfUPxRz2FJnvf/RjJGvFfaCsM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "5b09dc45f24cf32316283e62aec81ffee3c3e376",
+        "rev": "8a6d5427d99ec71c64f0b93d45778c889005d9c2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1756266583,
+        "narHash": "sha256-cr748nSmpfvnhqSXPiCfUPxRz2FJnvf/RjJGvFfaCsM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "8a6d5427d99ec71c64f0b93d45778c889005d9c2",
         "type": "github"
       },
       "original": {
@@ -55,7 +71,28 @@
     "root": {
       "inputs": {
         "glsl-shader-effects": "glsl-shader-effects",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_2",
+        "tones-generator": "tones-generator"
+      }
+    },
+    "tones-generator": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "dir": "images/tones-generator",
+        "lastModified": 1756407667,
+        "narHash": "sha256-bcFWqUIZBYwuAYUnhXNnA+5mZsHV5TPfOiBPmFtzQqA=",
+        "owner": "badele",
+        "repo": "awesome-scripts",
+        "rev": "0c170c631080b6bb3f31fc25bba952a3d3846a9e",
+        "type": "github"
+      },
+      "original": {
+        "dir": "images/tones-generator",
+        "owner": "badele",
+        "repo": "awesome-scripts",
+        "type": "github"
       }
     }
   },
