@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# Mosaic generated with 'montage profiles/*/*.png -geometry x150+2+2 -background black +label mosaique.png'
-
-echo $*
-
 # Default value
 OUTPUT_SIZE="${OUTPUT_SIZE:-1200x675}"
 BACKGROUND_COLOR="${BACKGROUND_COLOR:-none}"

@@ -45,6 +45,10 @@ check-requirements:
 @tones:
     cd resources &&tones-generator.sh gold 12 3
 
+# Generate mosaic of all profiles
+@mosaic:
+    montage profiles/*/*.png -geometry x150+2+2 -background black -font NEXTART-Light +label mosaique.png
+
 # Run all profiles tests
 @test: check-requirements download-nextart-font
     ./run_tests.sh
