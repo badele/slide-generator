@@ -1,0 +1,10 @@
+.direnv
+background.png
+background_resized.png
+difference.png
+Dockerfile*
+.dockerignore
+.git/
+.gitignore
+README.md
+tests/
