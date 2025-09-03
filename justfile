@@ -38,8 +38,8 @@ check-requirements:
     done
 
 # Compare image (when test fails)
-@compare SRC DST:
-    compare -metric RMSE "$SRC" "$DST" difference.png | sed 's/^\(.*\)$/\1/' || true
+@compare SRC DST OUTPUT="difference.png":
+    compare -metric RMSE "{{ SRC }}" "{{ DST }}" {{ OUTPUT }} | sed 's/^\(.*\)$/\1/' || true
 
 # Compute color tones
 @tones:
@@ -51,6 +51,8 @@ check-requirements:
 
 # Run all profiles tests
 @test: check-requirements download-nextart-font
+    mkdir -p tests
+    rm -f tests/*
     ./run_tests.sh
 
 # build docker image
@@ -72,4 +74,4 @@ check-requirements:
 # Test side-generator in docker
 [group('docker')]
 @docker-test: docker-build
-    docker run --rm slide-generator-tests:latest
+    docker run --rm -v slide-nix-store:/nix/store -v ./tests:/home/ubuntu/slide-generator/tests slide-generator-tests:latest
