@@ -1,10 +1,11 @@
 .direnv
 background.png
 background_resized.png
+output.png
 difference.png
+tests/
 Dockerfile*
 .dockerignore
 .git/
 .gitignore
 README.md
-tests/

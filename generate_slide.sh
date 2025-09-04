@@ -262,8 +262,8 @@ while [[ $HASSVG == false && $index -le 100 ]]; do
     cmd="${cmd} '('"
     [[ -n "$img_effects_before" ]] && cmd="${cmd} $img_effects_before"
     [[ -n "$img_bg" ]] && cmd="${cmd} -background '$img_bg'"
-    [[ -n "$img_effects_after" ]] && cmd="${cmd} $img_effects_after"
     cmd="${cmd} ${img_value}"
+    [[ -n "$img_effects_after" ]] && cmd="${cmd} $img_effects_after"
 
     cmd="$cmd ')' -gravity ${img_gravity}"
     [[ -n "$img_geometry" ]] && cmd="${cmd} -geometry '$img_geometry'"

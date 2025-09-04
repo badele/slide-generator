@@ -57,3 +57,17 @@
   --set TEXT91="L'atelier" --set TEXT91_FONT_SIZE=32 --set TEXT91_GRAVITY="north" --set TEXT91_GEOMETRY="+0+626" --set TEXT91_EFFECTS_AFTER="-trim -bordercolor '#104362' -border 12x0" \
   --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png" --set IMG99_GRAVITY="northeast" --set IMG99_GEOMETRY="+58+42"
 ```
+
+![result](./sample5.png)
+
+```bash
+./generate_slide.sh --profile user_post \
+  --set TEXT10="DEVOPS" \
+  --set TEXT11="BRUNO ADELÉ" \
+  --set TEXT12="SLIDE GENERATOR" \
+  --set TEXT13="Generate clean, impactful slides" \
+  --set TEXT14="for your social media posts in seconds" \
+  --set COMMAND90="-fill '#00B33C'  -draw 'rectangle 0,625 1200,675'" \
+  --set TEXT91="L'atelier" --set TEXT91_FONT_SIZE=32 --set TEXT91_GRAVITY="north" --set TEXT91_GEOMETRY="+0+639" --set TEXT91_BG="transparent" \
+  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png" --set IMG99_GRAVITY="northeast" --set IMG99_GEOMETRY="+58+42"
+```
