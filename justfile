@@ -46,8 +46,40 @@ check-requirements:
     cd resources &&tones-generator.sh gold 12 3
 
 # Generate mosaic of all profiles
-@mosaic:
+[group('ci')]
+@update-mosaic:
     montage profiles/*/*.png -geometry x150+2+2 -background black -font NEXTART-Light +label mosaique.png
+
+# Update ALL_SAMPLES.md with all sample images
+[group('ci')]
+update-samples:
+    #!/usr/bin/env bash
+    echo "# All Profile Samples" > ALL_SAMPLES.md
+    echo "" >> ALL_SAMPLES.md
+    echo "This file contains all sample images from all profiles." >> ALL_SAMPLES.md
+    echo "" >> ALL_SAMPLES.md
+    
+    for profile_dir in profiles/*/; do
+        profile_name=$(basename "$profile_dir")
+        samples=$(find "$profile_dir" -name "sample*.png" | sort)
+        
+        if [ -n "$samples" ]; then
+            echo "## $profile_name" >> ALL_SAMPLES.md
+            echo "" >> ALL_SAMPLES.md
+            
+            for sample in $samples; do
+                sample_name=$(basename "$sample")
+                echo "![${profile_name} - ${sample_name}]($sample)" >> ALL_SAMPLES.md
+                echo "" >> ALL_SAMPLES.md
+            done
+        fi
+    done
+
+# Update projects
+[group('ci')]
+@update-project:
+    just update-mosaic
+    just update-samples
 
 # Run all profiles tests
 @test: check-requirements download-nextart-font
