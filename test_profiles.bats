@@ -48,6 +48,8 @@ run_profile_configured_tests() {
             exit 1
         fi
 
+        mkdir -p tests
+
         FILE_SRC="tests/${profile}-sample$((i + 1))-test-orig.png"
         FILE_DST="tests/${profile}-sample$((i + 1))-test-output.png"
         FILE_DIFF="tests/${profile}-sample$((i + 1))-diff.png"

@@ -50,12 +50,12 @@ Example of using different parameters for the same profile
 
 ```bash
 ./generate_slide.sh --profile user_post \
-  --set TEXT2="DEVOPS" \
-  --set TEXT3="BRUNO ADELÉ" \
-  --set TEXT4="SLIDE GENERATOR" \
-  --set TEXT5="Generate clean, impactful slides" \
-  --set TEXT6="for your social media posts in seconds" \
-  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/bruno_avatar_128.png"
+  --set TEXT10="DEVOPS" \
+  --set TEXT11="BRUNO ADELÉ" \
+  --set TEXT12="SLIDE GENERATOR" \
+  --set TEXT13="Generate clean, impactful slides" \
+  --set TEXT14="for your social media posts in seconds" \
+  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png" --set IMG99_GRAVITY="northeast" --set IMG99_GEOMETRY="+58+502"
 ```
 
 ![user_post_blue_background](./profiles/user_post/sample1.png)
@@ -70,7 +70,7 @@ Example of using different parameters for the same profile
   --set TEXT4="SLIDE GENERATOR" \
   --set TEXT5="Generate clean, impactful slides" \
   --set TEXT6="for your social media posts in seconds" \
-  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/bruno_avatar_128.png"
+  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png"
 ```
 
 ![img_background](./profiles/user_post/sample2.png)
@@ -85,7 +85,7 @@ Example of using different parameters for the same profile
   --set TEXT4="SLIDE GENERATOR" \
   --set TEXT5="Generate clean, impactful slides" --set TEXT5_BG="#FFFFFF" --set TEXT5_FG="#000000" \
   --set TEXT6="for your social media posts in seconds" --set TEXT6_BG="#FFFFFF" --set TEXT6_FG="#000000" \
-  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/bruno_avatar_128.png"
+  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png"
 ```
 
 ![img_with_text_background](./profiles/user_post/sample3.png)
