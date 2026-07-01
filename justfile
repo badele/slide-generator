@@ -106,4 +106,5 @@ update-samples:
 # Test side-generator in docker
 [group('docker')]
 @docker-test: docker-build
+    mkdir -p tests && chmod 777 tests
     docker run --rm -v slide-nix-store:/nix/store -v ./tests:/home/ubuntu/slide-generator/tests slide-generator-tests:latest

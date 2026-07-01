@@ -14,11 +14,11 @@ tests:
       - --set TEXT6_FG="#FFD300"
       - --set TEXT6_FONT_SIZE=128
       - --set TEXT6_GEOMETRY="+40+200"
-      - --set TEXT7="Try it, you'll love it!"
+      - --set TEXT7="Try it, you'll love it\!"
       - --set TEXT7_FG="#FFFFFF"
       - --set TEXT7_FONT_SIZE=64
       - --set TEXT7_GEOMETRY="+40+330"
-      
+
   - name: exemple bar du coin
     description: Test with bar du coin theme
     command_args:
@@ -37,7 +37,7 @@ tests:
       - --set TEXT7_FG="#FFFFFF"
       - --set TEXT7_FONT_SIZE=64
       - --set TEXT7_GEOMETRY="+40+380"
-      
+
   - name: exemple barricade
     description: Test with barricade theme
     command_args:
