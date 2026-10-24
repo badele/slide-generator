@@ -476,7 +476,9 @@ export function Playground({ templates }: Props) {
           {tab === 'template' && (
             <button
               onClick={handleCopyUrl}
-              className="px-3 py-1.5 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-md transition-colors"
+              disabled={hasLargeParams}
+              title={hasLargeParams ? 'URL not shareable (contains embedded image data)' : undefined}
+              className="px-3 py-1.5 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 rounded-md transition-colors"
             >
               {copySuccess ? '✓ Copied!' : 'Copy URL'}
             </button>
