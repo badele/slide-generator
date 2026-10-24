@@ -1,0 +1,210 @@
+version: "1"
+name: citation
+description: "Quote card — citation with author attribution and reply section"
+output:
+  width: 1080
+  height: 1080
+
+fonts:
+  - family: AsapSharp
+    path: "resources/fonts/AsapSharp-900.ttf"
+    weight: 900
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-400.ttf"
+    weight: 400
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-700.ttf"
+    weight: 700
+
+palette:
+  - "#0D1B2A" # 1 — dark navy (background)
+  - "#FFFFFF" # 2 — white (citation text)
+  - "#F5C211" # 3 — yellow (accent / quote mark)
+  - "#94A3B8" # 4 — slate gray (secondary text)
+  - "#1E3A5F" # 5 — dark blue (reply block background)
+
+defaults:
+  fg: 2
+  font:
+    name: "Montserrat"
+    size: 28
+    weight: 400
+
+params:
+  background:
+    description: "Background color"
+    default: 1
+    type: color
+  bg_image:
+    description: "Background image URL (optional)"
+    default: ""
+    type: url
+
+  quote:
+    description: "Citation text"
+    required: true
+    default: "Le succès, c'est tomber sept fois et se relever huit."
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: AsapSharp
+        size: 72
+        weight: 900
+
+  quote_color:
+    description: "Citation text color"
+    default: 2
+    type: color
+
+  author:
+    description: "Author of the quote"
+    default: "— Japanese Proverb"
+    style:
+      fg: 3
+      font:
+        name: Montserrat
+        size: 28
+        weight: 700
+
+  separator_color:
+    description: "Horizontal separator line color"
+    default: 3
+    type: color
+
+  reply_background:
+    description: "Reply block background color"
+    default: 5
+    type: color
+
+  reply_label:
+    description: "Reply section label"
+    default: "RÉPONSE"
+    style:
+      fg: 3
+      font:
+        name: Montserrat
+        size: 18
+        weight: 700
+
+  reply:
+    description: "Reply / response text"
+    default: "Cette sagesse universelle nous rappelle que la résilience est la clé de tout accomplissement durable."
+    type: textarea
+    style:
+      fg: 4
+      font:
+        name: Montserrat
+        size: 30
+        weight: 400
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1080
+      height: 1080
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          src: "{{ bg_image }}"
+          width: 1080
+          height: 1080
+
+      # Main layout
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            width: 1080
+            height: 1080
+            padding: "72px 72px 0px 72px"
+          children:
+
+            # Citation block (flex: 1 — takes all available space)
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: column
+                  flex: 1
+                  justifyContent: flex-start
+                children:
+
+                  # Opening quote mark
+                  - type: span
+                    props:
+                      style:
+                        fontSize: 160
+                        fontFamily: "AsapSharp"
+                        fontWeight: 900
+                        color: "{{ quote_color }}"
+                        lineHeight: 0.6
+                        marginBottom: 24
+                        opacity: 0.25
+                      children: "“"
+
+                  # Quote text
+                  - type: lines
+                    props:
+                      param: quote
+                      style:
+                        lineHeight: 1.2
+                        color: "{{ quote_color }}"
+                      containerStyle:
+                        marginBottom: 32
+                      children: "{{ quote }}"
+
+                  # Author (right-aligned)
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        justifyContent: flex-end
+                      children:
+                        - type: span
+                          props:
+                            param: author
+                            children: "{{ author }}"
+
+            # Accent line separator
+            - type: div
+              props:
+                style:
+                  height: 3
+                  backgroundColor: "{{ separator_color }}"
+                  marginTop: 40
+
+            # Reply block
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: column
+                  backgroundColor: "{{ reply_background }}"
+                  padding: "28px 32px"
+                  marginTop: 0
+                  marginLeft: -72
+                  marginRight: -72
+                  gap: 10
+                children:
+
+                  # Reply label
+                  - type: span
+                    props:
+                      param: reply_label
+                      style:
+                        letterSpacing: 3
+                      children: "{{ reply_label }}"
+
+                  # Reply text
+                  - type: lines
+                    props:
+                      param: reply
+                      style:
+                        lineHeight: 1.5
+                      children: "{{ reply }}"

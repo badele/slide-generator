@@ -1,0 +1,148 @@
+version: "1"
+name: polaroid
+description: "Polaroid photo card with handwritten caption"
+output:
+  width: 1080
+  height: 1080
+
+fonts:
+  - family: Caveat
+    path: "resources/fonts/Caveat-400.ttf"
+    weight: 400
+  - family: Caveat
+    path: "resources/fonts/Caveat-700.ttf"
+    weight: 700
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-400.ttf"
+    weight: 400
+
+palette:
+  - "#2C2416" # 1 — dark wood (surface background)
+  - "#FDFAF4" # 2 — warm white (polaroid paper)
+  - "#1A1A1A" # 3 — ink black (caption text)
+  - "#888070" # 4 — muted gray (date/meta)
+
+defaults:
+  fg: 3
+  font:
+    name: "Caveat"
+    size: 36
+    weight: 400
+
+params:
+  background:
+    description: "Surface background color"
+    default: 1
+    type: color
+
+  photo:
+    description: "Photo URL"
+    default: ""
+    type: url
+  photo_x:
+    description: "Photo horizontal position (0–100)"
+    default: "50"
+    type: number
+    group: photo
+  photo_y:
+    description: "Photo vertical position (0–100)"
+    default: "50"
+    type: number
+    group: photo
+  photo_width:
+    description: "Photo width override (px)"
+    default: ""
+    type: number
+    group: photo
+  photo_height:
+    description: "Photo height override (px)"
+    default: ""
+    type: number
+    group: photo
+
+  caption:
+    description: "Handwritten caption below the photo"
+    default: "Un souvenir inoubliable ✨"
+    type: textarea
+    style:
+      fg: 3
+      font:
+        name: Caveat
+        size: 52
+        weight: 400
+
+  date:
+    description: "Date annotation (optional)"
+    default: "Été 1994"
+    style:
+      fg: 4
+      font:
+        name: Caveat
+        size: 34
+        weight: 400
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1080
+      height: 1080
+      position: relative
+      alignItems: center
+      justifyContent: center
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1080
+          height: 1080
+
+      # Polaroid card
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            backgroundColor: "#FDFAF4"
+            padding: "24px 24px 0px 24px"
+            width: 720
+          children:
+
+            # Photo area (neutral placeholder when no photo)
+            - type: image
+              props:
+                src: "{{ photo }}"
+                x: "{{ photo_x }}"
+                y: "{{ photo_y }}"
+                imgWidth: "{{ photo_width }}"
+                imgHeight: "{{ photo_height }}"
+                containerStyle:
+                  width: 672
+                  height: 672
+                  backgroundColor: "#C8BFB0"
+
+            # White strip — caption
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: column
+                  alignItems: center
+                  justifyContent: center
+                  paddingTop: 20
+                  paddingBottom: 28
+                  gap: 6
+                children:
+                  - type: lines
+                    props:
+                      param: caption
+                      style:
+                        textAlign: center
+                      containerStyle:
+                        alignItems: center
+                      children: "{{ caption }}"
+                  - type: span
+                    props:
+                      param: date
+                      children: "{{ date }}"

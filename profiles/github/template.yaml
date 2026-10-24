@@ -1,0 +1,142 @@
+version: "1"
+name: github
+description: "GitHub-style repository Open Graph card"
+output:
+  width: 1200
+  height: 630
+
+fonts:
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-100.ttf"
+    weight: 100
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-400.ttf"
+    weight: 400
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-700.ttf"
+    weight: 700
+
+palette:
+  - "#1f2328" # 1 — GitHub dark (title)
+  - "#656d76" # 2 — GitHub gray (description)
+  - "#ffffff" # 3 — white background
+  - "#3178c6" # 4 — TypeScript blue (bar default)
+
+defaults:
+  fg: 2
+  font:
+    name: "Montserrat"
+    size: 30
+    weight: 400
+
+params:
+  background:
+    description: "Background color"
+    default: 3
+    type: color
+  title:
+    description: "Repository name"
+    required: true
+    default: "slide-generator"
+    style:
+      fg: 1
+      font:
+        name: Montserrat
+        size: 88
+        weight: 700
+  description:
+    description: "Repository description"
+    default: "Generate clean, impactful slides for your social media posts in seconds."
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 30
+        weight: 400
+  avatar:
+    description: "Avatar image URL"
+    default: "https://avatars.githubusercontent.com/badele"
+    type: url
+  bar_color:
+    description: "Bottom bar color"
+    default: 4
+    type: color
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      flexDirection: column
+      width: 1200
+      height: 630
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 630
+      # Main content area
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: row
+            flex: 1
+            padding: "60px 70px 50px 70px"
+          children:
+            # Left: title + description
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: column
+                  flex: 1
+                  paddingRight: 40
+                children:
+                  # repo title
+                  - type: span
+                    props:
+                      param: title
+                      style:
+                        lineHeight: 1.1
+                        marginBottom: 20
+                      children: "{{ title }}"
+                  # description
+                  - type: span
+                    props:
+                      param: description
+                      style:
+                        lineHeight: 1.5
+                        flexGrow: 1
+                      children: "{{ description }}"
+            # Right: avatar
+            - type: div
+              props:
+                style:
+                  display: flex
+                  alignItems: flex-start
+                  justifyContent: flex-end
+                children:
+                  - type: img
+                    props:
+                      src: "{{ avatar }}"
+                      style:
+                        width: 160
+                        height: 160
+                        borderRadius: 18
+                        objectFit: cover
+
+      # Bottom language bar
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: row
+            height: 14
+          children:
+            - type: div
+              props:
+                style:
+                  flex: 1
+                  backgroundColor: "{{ bar_color }}"

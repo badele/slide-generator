@@ -6,51 +6,115 @@ set export
 @help:
     just -l -u
 
-[private]
-download-nextart-font:
+###############################################################################
+# Dev
+###############################################################################
+
+# Install dependencies
+[group('dev')]
+@install:
+    npm install
+
+# Download fonts from Google Fonts (cached — only downloads missing files)
+[group('dev')]
+@load-fonts:
+    npm run load-fonts
+
+# Start development server (loads fonts first)
+[group('dev')]
+dev: load-fonts
+    @npm run dev
+
+# Build for production (loads fonts first)
+[group('dev')]
+build: load-fonts
+    @npm run build
+
+# Run tests
+[group('dev')]
+@test:
+    npm test
+
+# Generate a slide via CLI (ex: just generate simple title="Hello" subtitle="World")
+[group('dev')]
+generate TEMPLATE="simple" *ARGS="":
     #!/usr/bin/env bash
-    FONTPATH="$HOME/.local/share/fonts"
+    PARAMS=""
+    for arg in {{ ARGS }}; do
+        PARAMS="$PARAMS --set $arg"
+    done
+    npx tsx src/cli.ts generate --template {{ TEMPLATE }} $PARAMS --output output.png
+    echo "→ output.png"
 
-    if [ ! -d "$HOME/.local/share/fonts" ]; then
-        echo "Downloading NEXT ART font..."
+###############################################################################
+# Docker
+###############################################################################
 
-        mkdir -p $HOME/.local/share/fonts
+# Démarrer le service en arrière-plan
+[group('docker')]
+@start:
+    docker compose up --build -d
+    echo ""
+    echo "Slide Generator démarré."
+    echo ""
+    echo "  Playground  →  http://localhost:3000"
+    echo "  API         →  http://localhost:3000/api/generate?template=simple&title=Hello"
+    echo "  Templates   →  http://localhost:3000/api/templates"
+    echo ""
+    echo "Logs : just logs"
+    echo "Stop : just stop"
 
-        # Install NetArt font
-        curl -o /tmp/nextart.zip "https://dl.dafont.com/dl/?f=next_art"
-        unzip /tmp/nextart.zip -d $HOME/.local/share/fonts/
+# Arrêter le service
+[group('docker')]
+@stop:
+    docker compose down
 
-        # Install Segoe UI This font
-        curl -o /tmp/segoe-ui-this.zip "https://font.download/dl/font/segoe-ui-this.zip"
-        unzip /tmp/segoe-ui-this.zip -d $HOME/.local/share/fonts/
+# Redémarrer le service
+[group('docker')]
+@restart:
+    just stop
+    just start
 
-        fc-cache -fv
+# Reconstruire l'image et redémarrer
+[group('docker')]
+rebuild SERVICE="":
+    #!/usr/bin/env bash
+    if [ -n "$SERVICE" ]; then
+        docker compose up --build -d "$SERVICE"
+    else
+        docker compose down
+        docker compose up --build -d
     fi
 
-[private]
-check-requirements:
+# Afficher les logs (ex: just logs  ou  just logs slide-generator)
+[group('docker')]
+logs SERVICE="":
     #!/usr/bin/env bash
-    for cmd in curl bats unzip magick yq; do
-        if ! command -v $cmd >/dev/null 2>&1; then
-            echo "$cmd is not installed. Please install it to run tests."
-            exit 1
-        fi
-    done
+    if [ -n "$SERVICE" ]; then
+        docker compose logs -f "$SERVICE"
+    else
+        docker compose logs -f
+    fi
 
-# Compare image (when test fails)
+# Statut des containers
+[group('docker')]
+@status:
+    docker compose ps
+
+# Alias court pour status
+[group('docker')]
+@ps:
+    docker compose ps
+
+###############################################################################
+# CI / Utils
+###############################################################################
+
+# Compare deux images (utile quand un test échoue)
 @compare SRC DST OUTPUT="difference.png":
     compare -metric RMSE "{{ SRC }}" "{{ DST }}" {{ OUTPUT }} | sed 's/^\(.*\)$/\1/' || true
 
-# Compute color tones
-@tones:
-    cd resources &&tones-generator.sh gold 12 3
-
-# Generate mosaic of all profiles
-[group('ci')]
-@update-mosaic:
-    montage profiles/*/*.png -geometry x150+2+2 -background black -font NEXTART-Light +label mosaique.png
-
-# Update ALL_SAMPLES.md with all sample images
+# Mettre à jour ALL_SAMPLES.md avec les samples de tous les profils
 [group('ci')]
 update-samples:
     #!/usr/bin/env bash
@@ -58,15 +122,15 @@ update-samples:
     echo "" >> ALL_SAMPLES.md
     echo "This file contains all sample images from all profiles." >> ALL_SAMPLES.md
     echo "" >> ALL_SAMPLES.md
-    
+
     for profile_dir in profiles/*/; do
         profile_name=$(basename "$profile_dir")
         samples=$(find "$profile_dir" -name "sample*.png" | sort)
-        
+
         if [ -n "$samples" ]; then
             echo "## $profile_name" >> ALL_SAMPLES.md
             echo "" >> ALL_SAMPLES.md
-            
+
             for sample in $samples; do
                 sample_name=$(basename "$sample")
                 echo "![${profile_name} - ${sample_name}]($sample)" >> ALL_SAMPLES.md
@@ -74,37 +138,3 @@ update-samples:
             done
         fi
     done
-
-# Update projects
-[group('ci')]
-@update-project:
-    just update-mosaic
-    just update-samples
-
-# Run all profiles tests
-@test: check-requirements download-nextart-font
-    mkdir -p tests
-    rm -f tests/*
-    ./run_tests.sh
-
-# build docker image
-[group('docker')]
-@docker-build:
-    #!/usr/bin/env bash
-
-    cp .gitignore .dockerignore
-    cat >> .dockerignore << 'EOF'
-    Dockerfile*
-    .dockerignore
-    .git/
-    .gitignore
-    README.md
-    EOF
-
-    docker build -t slide-generator-tests:latest .
-
-# Test side-generator in docker
-[group('docker')]
-@docker-test: docker-build
-    mkdir -p tests && chmod 777 tests
-    docker run --rm -v slide-nix-store:/nix/store -v ./tests:/home/ubuntu/slide-generator/tests slide-generator-tests:latest

@@ -1,0 +1,117 @@
+version: "1"
+name: aquaponey
+description: "Aquaponey — fun & coloré, police manuscrite Caveat"
+output:
+  width: 1200
+  height: 675
+
+fonts:
+  - family: Caveat
+    path: "resources/fonts/Caveat-700.ttf"
+    weight: 700
+  - family: Caveat
+    path: "resources/fonts/Caveat-400.ttf"
+    weight: 400
+
+palette:
+  - "#0EA5E9" # 1 — sky blue (fond)
+  - "#FDE047" # 2 — jaune (Aquaponey)
+  - "#FFFFFF" # 3 — blanc
+  - "#F472B6" # 4 — rose (accent)
+  - "#0369A1" # 5 — bleu foncé
+
+defaults:
+  fg: 3
+  font:
+    name: Caveat
+    size: 56
+    weight: 700
+
+params:
+  background:
+    description: Couleur de fond
+    default: 1
+    type: color
+
+  name:
+    description: Prénom ou nom de la personne
+    required: true
+    default: "[Prénom]"
+    style:
+      fg: 3
+      font:
+        name: Caveat
+        size: 100
+        weight: 700
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 675
+
+      # Bande décorative basse
+      - type: div
+        props:
+          style:
+            position: absolute
+            bottom: 0
+            left: 0
+            width: 1200
+            height: 90
+            backgroundColor: "#0369A1"
+            opacity: 0.45
+
+      # Contenu centré
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            alignItems: center
+            justifyContent: center
+            width: 1200
+            height: 675
+            gap: 2
+          children:
+            - type: span
+              props:
+                style:
+                  fontFamily: Caveat
+                  fontSize: 54
+                  fontWeight: 700
+                  color: "#FFFFFF"
+                  opacity: 0.9
+                children: "Aujourd'hui c'est"
+            - type: span
+              props:
+                style:
+                  fontFamily: Caveat
+                  fontSize: 148
+                  fontWeight: 700
+                  color: "#FDE047"
+                  lineHeight: 1.0
+                children: "Aquaponey"
+            - type: span
+              props:
+                style:
+                  fontFamily: Caveat
+                  fontSize: 54
+                  fontWeight: 700
+                  color: "#FFFFFF"
+                  opacity: 0.9
+                  marginTop: 6
+                children: "pour"
+            - type: span
+              props:
+                param: name
+                children: "{{ name }}"

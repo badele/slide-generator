@@ -1,0 +1,193 @@
+version: "1"
+name: build_with_ai
+description: "AI project card — robot icon, bold teal title, build pipeline"
+output:
+  width: 1200
+  height: 675
+
+fonts:
+  - family: BarlowCondensed
+    path: "resources/fonts/BarlowCondensed-900.ttf"
+    weight: 900
+  - family: BarlowCondensed
+    path: "resources/fonts/BarlowCondensed-700.ttf"
+    weight: 700
+
+palette:
+  - "#18181B" # 1 — near-black (background)
+  - "#00D4B4" # 2 — teal (title)
+  - "#22C55E" # 3 — green
+  - "#F97316" # 4 — orange
+  - "#FFFFFF" # 5 — white
+  - "#6B7280" # 6 — gray (muted labels)
+
+defaults:
+  fg: 5
+  font:
+    name: BarlowCondensed
+    size: 28
+    weight: 700
+
+params:
+  background:
+    description: Background color
+    default: 1
+    type: color
+
+  icon_bg:
+    description: Icon badge background color
+    default: "#6366F1"
+    type: color
+
+  title:
+    description: Main title
+    required: true
+    default: "BUILD WITH AI"
+    style:
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 96
+        weight: 900
+
+  tagline:
+    description: Optional tagline under the title
+    default: ""
+    style:
+      fg: 6
+      font:
+        name: BarlowCondensed
+        size: 36
+        weight: 700
+
+  pipeline:
+    description: "Pipeline steps — use [FG=N]text[/] for colors (3=green, 4=orange, 6=gray)"
+    default: "[FG=6]SPEC[/] HUMAN  ·  [FG=6]CODE[/] AI  ·  [FG=6]HUMAN XP[/] [FG=4]MEDIUM[/]  ·  [FG=6]REVIEW[/] [FG=3]HUMAN[/]"
+    type: textarea
+    style:
+      fg: 5
+      font:
+        name: BarlowCondensed
+        size: 30
+        weight: 700
+      split: false
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 675
+
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            width: 1200
+            height: 675
+            padding: "80px 80px 64px 80px"
+          children:
+
+            # Header: robot icon + title
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: row
+                  alignItems: center
+                  gap: 64
+                  flex: 1
+                children:
+
+                  # Robot icon badge
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        flexDirection: column
+                        alignItems: center
+                        justifyContent: center
+                        width: 180
+                        height: 180
+                        borderRadius: 32
+                        backgroundColor: "{{ icon_bg }}"
+                        flexShrink: 0
+                        gap: 14
+                      children:
+                        # Eyes row
+                        - type: div
+                          props:
+                            style:
+                              display: flex
+                              gap: 22
+                            children:
+                              - type: div
+                                props:
+                                  style:
+                                    width: 30
+                                    height: 30
+                                    borderRadius: 15
+                                    backgroundColor: "#FFFFFF"
+                              - type: div
+                                props:
+                                  style:
+                                    width: 30
+                                    height: 30
+                                    borderRadius: 15
+                                    backgroundColor: "#FFFFFF"
+                        # Mouth
+                        - type: div
+                          props:
+                            style:
+                              width: 64
+                              height: 10
+                              borderRadius: 5
+                              backgroundColor: "#FFFFFF"
+                              opacity: 0.85
+
+                  # Title column
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        flexDirection: column
+                        justifyContent: center
+                        gap: 10
+                      children:
+                        - type: span
+                          props:
+                            param: title
+                            style:
+                              letterSpacing: 6
+                            children: "{{ title }}"
+                        - type: span
+                          props:
+                            param: tagline
+                            style:
+                              letterSpacing: 3
+                            children: "{{ tagline }}"
+
+            # Separator line
+            - type: div
+              props:
+                style:
+                  height: 2
+                  backgroundColor: "#2A2A2E"
+                  marginBottom: 32
+
+            # Pipeline steps
+            - type: lines
+              props:
+                param: pipeline
+                style:
+                  letterSpacing: 3
+                children: "{{ pipeline }}"
