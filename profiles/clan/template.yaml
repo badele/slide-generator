@@ -30,7 +30,7 @@ params:
     type: color
   bg_image:
     description: Background visual URL (optional, overlaid faintly)
-    default: http://localhost:3000/clan_background.png
+    default: https://poster.ma-cabane.eu//clan_background.png
     type: url
   logo:
     description: Logo URL (top-right)
