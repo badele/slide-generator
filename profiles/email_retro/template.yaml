@@ -1,0 +1,175 @@
+version: "1"
+name: email_retro
+description: Raw plain-text email — early Usenet/internet aesthetic (VT323 pixel font)
+output:
+  width: 1080
+  height: 1080
+fonts:
+  - family: VT323
+    path: resources/fonts/VT323-400.ttf
+    weight: 400
+palette:
+  - "#FFFFFF"
+  - "#111111"
+  - "#444444"
+defaults:
+  fg: 2
+  font:
+    name: VT323
+    size: 26
+    weight: 400
+params:
+  background:
+    description: Background color
+    default: 1
+    type: color
+  from:
+    description: From header
+    default: brunoadele@gmail.com (Bruno Adelé)
+  to:
+    description: To header
+    default: team@slide-generator.com
+  subject:
+    description: Subject header
+    default: News from the slide generator project
+  date:
+    description: Date header
+    default: 24 Oct 26 20:57:08 CEST
+  body:
+    description: Email body text
+    default: |
+      Hello everyone,
+
+      I would like to share a few updates regarding the ongoing refactoring of Slide Generator.
+
+      I am currently revisiting the project's technical stack, moving away from the existing Bash scripts and ImageMagick implementation towards a new approach based on TypeScript and the Satori framework.
+
+      The main purpose of this refactoring is to make Slide Generator more flexible, easier to maintain, and, most importantly, fully self-hostable.
+
+      I hope you will enjoy this new version.
+
+      bruno (brunoadele@gmail.com)
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: VT323
+        size: 26
+        weight: 400
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1080
+      height: 1080
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1080
+          height: 1080
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            width: 1080
+            height: 1080
+            padding: 48px 56px
+          children:
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: column
+                  gap: 0
+                  marginBottom: 4
+                children:
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        flexDirection: row
+                      children:
+                        - type: span
+                          props:
+                            style:
+                              fontFamily: VT323
+                              fontSize: 26
+                              fontWeight: 400
+                              color: "#444444"
+                              width: 140
+                            children: "From:"
+                        - type: span
+                          props:
+                            param: from
+                            children: "{{ from }}"
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        flexDirection: row
+                      children:
+                        - type: span
+                          props:
+                            style:
+                              fontFamily: VT323
+                              fontSize: 26
+                              fontWeight: 400
+                              color: "#444444"
+                              width: 140
+                            children: "To:"
+                        - type: span
+                          props:
+                            param: to
+                            children: "{{ to }}"
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        flexDirection: row
+                      children:
+                        - type: span
+                          props:
+                            style:
+                              fontFamily: VT323
+                              fontSize: 26
+                              fontWeight: 400
+                              color: "#444444"
+                              width: 140
+                            children: "Subject:"
+                        - type: span
+                          props:
+                            param: subject
+                            children: "{{ subject }}"
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        flexDirection: row
+                      children:
+                        - type: span
+                          props:
+                            style:
+                              fontFamily: VT323
+                              fontSize: 26
+                              fontWeight: 400
+                              color: "#444444"
+                              width: 140
+                            children: "Date:"
+                        - type: span
+                          props:
+                            param: date
+                            children: "{{ date }}"
+            - type: div
+              props:
+                style:
+                  height: 28
+            - type: lines
+              props:
+                param: body
+                style:
+                  lineHeight: 1.35
+                children: "{{ body }}"

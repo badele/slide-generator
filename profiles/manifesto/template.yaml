@@ -1,0 +1,147 @@
+version: "1"
+name: manifesto
+description: Bold manifesto card — brand + impactful headline + tagline on solid color
+output:
+  width: 1200
+  height: 675
+fonts:
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-900.ttf
+    weight: 900
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-700.ttf
+    weight: 700
+  - family: Montserrat
+    path: resources/fonts/Montserrat-700.ttf
+    weight: 700
+palette:
+  - "#CC1519"
+  - "#F0EBE0"
+  - "#FFFFFF"
+  - "#000000"
+defaults:
+  fg: 2
+  font:
+    name: BarlowCondensed
+    size: 120
+    weight: 900
+params:
+  background:
+    description: Background color
+    default: 1
+    type: color
+  brand:
+    description: Brand / media name
+    default: JOURNAL DU ROI
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 20
+        weight: 700
+  brand_logo:
+    description: Brand logo URL (optional, shown left of brand name)
+    default: ""
+    type: url
+  brand_logo_height:
+    description: Brand logo height (px)
+    default: "22"
+    type: number
+    group: brand_logo
+  title:
+    description: Main headline — use \n for line breaks
+    required: true
+    default: |-
+      LA
+      MACRON
+      NIE
+      LA DEMOCRATIE
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 128
+        weight: 900
+  title_color:
+    description: Headline color
+    default: 2
+    type: color
+  tagline:
+    description: Tagline / subtitle at the bottom
+    default: ETAT DES LIEUX
+    style:
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 32
+        weight: 700
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 675
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            alignItems: center
+            width: 1200
+            height: 675
+            padding: 44px 80px 44px 80px
+          children:
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: row
+                  alignItems: center
+                  gap: 10
+                children:
+                  - type: image
+                    props:
+                      src: "{{ brand_logo }}"
+                      imgHeight: "{{ brand_logo_height }}"
+                  - type: span
+                    props:
+                      param: brand
+                      style:
+                        letterSpacing: 2
+                      children: "{{ brand }}"
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flex: 1
+                  flexDirection: column
+                  justifyContent: center
+                  alignItems: center
+                children:
+                  - type: lines
+                    props:
+                      param: title
+                      style:
+                        textAlign: center
+                        lineHeight: 0.95
+                        color: "{{ title_color }}"
+                        textTransform: uppercase
+                      containerStyle:
+                        alignItems: center
+                        gap: 0
+                      children: "{{ title }}"
+            - type: span
+              props:
+                param: tagline
+                style:
+                  letterSpacing: 3
+                children: "{{ tagline }}"

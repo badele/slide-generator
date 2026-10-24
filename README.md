@@ -1,169 +1,241 @@
 # slide-generator
 
-Generate clean, impactful slides for your social media posts in seconds.
+Generate clean, impactful slides for social media and Open Graph in seconds — from a browser Playground or a REST API.
 
-## Usage
+> **v2** — complete rewrite in TypeScript / Next.js / Satori. Templates are now defined in YAML, rendered server-side as PNG via the Satori layout engine (no ImageMagick).
 
-The slide generator uses a simple CLI interface with profiles and customizable
-variables. We can calling this **Slide As Code (SAC)**
+---
 
-### Basic syntax
+## Quick start
+
+### Docker (recommended)
 
 ```bash
-./generate_slide.sh --profile PROFILE_NAME [--set VAR=VALUE ...]
+just start
 ```
 
-### Options
+Opens on **http://localhost:3000**
 
-- `--profile PROFILE_NAME` : Load a profile from the `profiles/` directory
-  (required)
-- `--set VAR=VALUE` : Set or override any variable (can be used multiple times)
-- `--help` : Show help and usage examples
-
-## Examples
-
-### [Minimal profile](./profiles/minimal/)
-
-With this profile, all parameters must be entered. Below are some examples of
-profiles with pre-filled parameters.
-
-```bash
-./generate_slide.sh --profile minimal \
-  --set BACKGROUND_COLOR="#104362" \
-  --set TEXT1="THE" \
-  --set TEXT1_GEOMETRY="+0-64" \
-  --set TEXT2="minimal" \
-  --set TEXT2_FONT_SIZE=96 \
-  --set TEXT2_FG="#FFD300" \
-  --set TEXT2_GEOMETRY="+0-0" \
-  --set TEXT3="profile" \
-  --set TEXT3_GEOMETRY="+0+64"
+```
+Playground  →  http://localhost:3000
+API         →  http://localhost:3000/api/generate?template=news&title=Hello
+Templates   →  http://localhost:3000/api/templates
 ```
 
-![minimal profile](./profiles/minimal/sample1.png)
+Stop with `just stop`, rebuild with `just rebuild`.
 
-### [User post profile](./profiles/user_post/)
-
-Example of using different parameters for the same profile
-
-#### Blue background
+### Development
 
 ```bash
-./generate_slide.sh --profile user_post \
-  --set TEXT10="DEVOPS" \
-  --set TEXT11="BRUNO ADELÉ" \
-  --set TEXT12="SLIDE GENERATOR" \
-  --set TEXT13="Generate clean, impactful slides" \
-  --set TEXT14="for your social media posts in seconds" \
-  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png" --set IMG99_GRAVITY="northeast" --set IMG99_GEOMETRY="+58+502"
+just install     # npm install
+just dev         # download missing fonts then start next dev
 ```
 
-![user_post_blue_background](./profiles/user_post/sample1.png)
+---
 
-#### Custom background image
+## API
 
-```bash
-./generate_slide.sh --profile user_post \
-  --set IMG1="resources/vim_vide_project.png" \
-  --set TEXT2="DEVOPS" \
-  --set TEXT3="BRUNO ADELÉ" \
-  --set TEXT4="SLIDE GENERATOR" \
-  --set TEXT5="Generate clean, impactful slides" \
-  --set TEXT6="for your social media posts in seconds" \
-  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png"
+### `GET /api/generate` — render a template
+
+```
+GET /api/generate?template=TEMPLATE_NAME[&param=value...]
 ```
 
-![img_background](./profiles/user_post/sample2.png)
-
-#### Image with contrasted text
+Returns a PNG image. All parameters are optional (each template provides defaults).
 
 ```bash
-./generate_slide.sh --profile user_post \
-  --set IMG1="resources/vim_vide_project.png" \
-  --set TEXT2="DEVOPS" \
-  --set TEXT3="BRUNO ADELÉ" \
-  --set TEXT4="SLIDE GENERATOR" \
-  --set TEXT5="Generate clean, impactful slides" --set TEXT5_BG="#FFFFFF" --set TEXT5_FG="#000000" \
-  --set TEXT6="for your social media posts in seconds" --set TEXT6_BG="#FFFFFF" --set TEXT6_FG="#000000" \
-  --set IMG99="https://raw.githubusercontent.com/badele/slide-generator/refs/heads/main/resources/bruno_avatar_128.png"
+# Default render
+curl "http://localhost:3000/api/generate?template=news" -o news.png
+
+# With custom parameters
+curl "http://localhost:3000/api/generate?template=news&title=Big+News&category=TECH" -o news.png
 ```
 
-![img_with_text_background](./profiles/user_post/sample3.png)
+### `POST /api/preview` — render a custom YAML template
 
-### [bottom title block](./profiles/bottom_title_block/)
+For templates too large for a GET URL (e.g. base64 images) or for free-mode YAML:
 
 ```bash
-./generate_slide.sh --profile bottom_title_block \
-  --set COMMAND1="https://raw.githubusercontent.com/badele/vide/main/doc/img/plug_dashboard.png -resize x675  -gravity northwest -geometry +0+0 -composite" \
-  --set COMMAND2="-fill '#10701a'  -draw 'rectangle 0,422 1200,675'" \
-  --set TEXT5="VIM" \
-  --set TEXT6="Try it, you\'ll love it!" --set TEXT99_BG="'#10701a'" \
-  --set TEXT99="L'atelier" --set TEXT99_EFFECTS_AFTER="-trim -bordercolor '#10701a' -border 12x0"
+curl -X POST http://localhost:3000/api/preview \
+  -H "Content-Type: application/json" \
+  -d '{"yaml": "<template yaml>", "params": {"title": "Hello"}}' \
+  -o preview.png
 ```
 
-![result](./profiles/bottom_title_block/sample1.png)
+### Other endpoints
 
-### Other examples
+| Endpoint | Description |
+|---|---|
+| `GET /api/templates` | JSON list of all available templates with their params |
+| `GET /api/templates/:name` | Raw YAML source of a template |
+| `POST /api/validate` | Validate a YAML template (returns `{valid, error}`) |
+| `GET /api/img-convert?url=…` | Fetch a remote image and return it as a `data:` URI |
 
-You can see other examples on [profiles](./profiles/) folder
+---
 
-[![mosaique](./mosaique.png)](./profiles/)
+## Available templates
 
-## From SVG image
+| Template | Format | Description |
+|---|---|---|
+| `aquaponey` | 1200×675 | Aujourd'hui c'est aquaponey pour… — Caveat manuscrite |
+| `book` | 1080×1080 | Book cover — auteur, illustration, titre, éditeur |
+| `book_oreilly` | 1080×1080 | O'Reilly-style book cover — barre, bloc rouge, illustration |
+| `build_with_ai` | 1200×675 | AI project card — icône robot, titre teal, pipeline build |
+| `citation` | 1080×1080 | Citation avec attribution auteur et section réponse |
+| `clan` | 1200×675 | Clan.lol — fond teal, titre, sous-titre, logo top-right |
+| `email_retro` | 1080×1080 | Email brut années 90 — esthétique Usenet, pixel font VT323 |
+| `github` | 1200×675 | GitHub repository Open Graph card |
+| `manifesto` | 1200×675 | Carte manifesto — marque, gros titre, tagline |
+| `news` | 1200×675 | Carte article de presse — catégorie, titre, résumé, auteur |
+| `polaroid` | 1080×1080 | Photo polaroid avec légende manuscrite et date |
+| `post_bottom` | 1200×675 | Post social — titre et description en bas |
+| `post_top` | 1200×675 | Post social — titre, description et footer auteur |
+| `quiafuite` | 1200×675 | Tracker de fuites de données — terminal rétro VT323 |
 
-You can also replace text from a SVG file.
+---
 
-```bash
-./generate_slide.sh --profile minimal \
-  --set IMG_BACKGROUND="https://raw.githubusercontent.com/badele/slide-generator-templates/refs/heads/main/windows8_BSOD/template.svg" \
-  --set TEXT1="Your PC ran into a problem that it couldn’t" \
-  --set TEXT2="handle and now it needs to restart" \
-  --set TEXT3="You can search for the error online."
+## Template format
+
+Templates are YAML files in `profiles/<name>/template.yaml`.
+
+```yaml
+version: "1"
+name: my_template
+description: "Short description"
+output:
+  width: 1200
+  height: 675
+
+fonts:
+  - family: BarlowCondensed
+    path: "resources/fonts/BarlowCondensed-900.ttf"
+    weight: 900
+
+palette:
+  - "#18181B"  # 1 — background
+  - "#00D4B4"  # 2 — accent
+  - "#FFFFFF"  # 3 — white
+
+defaults:
+  fg: 3              # default text color (palette index)
+  font:
+    name: BarlowCondensed
+    size: 36
+    weight: 700
+
+params:
+  background:
+    description: Background color
+    default: 1         # palette index → resolved to hex
+    type: color        # color | textarea | url | number | boolean
+  title:
+    description: Main title
+    required: true
+    default: "My Title"
+    style:             # overrides defaults for this param
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 96
+        weight: 900
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      - type: background       # special: lifts color to parent backgroundColor
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 675
+      - type: span
+        props:
+          param: title         # applies param style automatically
+          children: "{{ title }}"
 ```
 
-![result](./profiles/minimal/sample2.png)
+### Special element types
 
-## Customization
+| Type | Description |
+|---|---|
+| `background` | Sets parent `backgroundColor`; adds absolutely-positioned `<img>` if `src` provided |
+| `lines` | Splits text on `\n`, renders each line in a flex column. Inner blank lines become spacers |
+| `image` | Positions an image within a flex container with `x`/`y` alignment (0–100) |
 
-You can customize any aspect of your slide by using the `--set` option:
+### Inline markup (inside `lines` and `span` children)
 
-### Text customization
-
-```bash
-# Change text content
---set TEXT1="Your title"
---set TEXT2="Your subtitle"
-
-# Change text colors
---set TEXT3_FG="#FFD300"  # Foreground color
---set TEXT3_BG="#FFFFFF"  # Background color
-
-# Change text positioning
---set TEXT1_GEOMETRY="+100+200"
-
-# Change font style and size
---set TEXT1_FONT_STYLE="Light"
---set TEXT1_FONT_SIZE=48
+```
+[FG=2]colored text[/]          → text in palette color 2
+[BG=1]highlighted[/]           → background in palette color 1
+[FS=48 FW=900]big bold[/]      → font-size 48, font-weight 900
+[FN=Caveat]handwriting[/]      → font-family override
+[ROT=45]rotated[/]             → rotate transform
+[ALIGN=center]centered line[/] → line-level alignment (lines only)
 ```
 
-### Background customization
+### Grouping sub-params
 
-```bash
-# Solid color background
---set BACKGROUND_COLOR="#104362"
-
-# Custom image background
---set BACKGROUND_IMG="/path/to/image.jpg"
-
-# Background size
---set OUTPUT_SIZE="1920x1080"
+```yaml
+params:
+  logo:
+    description: Logo image URL
+    default: ""
+    type: url
+  logo_height:
+    description: Logo height in px
+    default: "54"
+    type: number
+    group: logo    # shown as sub-field of "logo" in the Playground
 ```
 
-### Image elements
+---
+
+## Adding fonts
+
+Edit `fonts.yaml` then run `just load-fonts` to download from Google Fonts:
+
+```yaml
+- family: Barlow Condensed
+  weights: [700, 900]
+  styles: [normal]
+```
+
+Font files are saved to `resources/fonts/` as `FamilyName-weight.ttf`.
+
+---
+
+## Playground
+
+The web UI at `http://localhost:3000` provides:
+
+- **Template mode** — select a template, edit parameters live, preview in real time
+- **Free mode** — paste or write raw YAML, preview with full Satori rendering
+- **OG Inspect** — enter any URL to extract and preview its Open Graph tags
+- **Image tool** — convert a URL or uploaded file to a `data:` URI for use in templates
+- **Edit YAML** button — copies the current template (with all modifications) to Free mode
+- **Copy URL** button — generates a shareable GET URL with all current parameters
+
+---
+
+## Development commands
 
 ```bash
-# Add custom images
---set IMG1="/path/to/logo.png"
---set IMG1_GEOMETRY="+50+50"
---set IMG1_GRAVITY="northeast"
+just install        # Install npm dependencies
+just load-fonts     # Download missing fonts from Google Fonts
+just dev            # Start dev server (port 3000)
+just build          # Production build
+just test           # Run unit tests
+
+# Docker
+just start          # Build and start in background
+just stop           # Stop containers
+just restart        # Stop + start
+just rebuild        # Force rebuild image
+just logs           # Follow container logs
+just status         # Container status
 ```

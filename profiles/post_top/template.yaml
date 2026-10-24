@@ -1,0 +1,155 @@
+version: "1"
+name: post_top
+description: "Social media post with title, description and discreet author footer"
+output:
+  width: 1200
+  height: 675
+
+fonts:
+  - family: "Noto Sans Mono"
+    path: "resources/fonts/NotoSansMono-400.ttf"
+    weight: 400
+  - family: "Noto Sans Mono"
+    path: "resources/fonts/NotoSansMono-700.ttf"
+    weight: 700
+  - family: "Asap Sharp"
+    path: "resources/fonts/AsapSharp-900.ttf"
+    weight: 900
+
+palette:
+  - "#FFD300" # 1 — yellow accent
+  - "#FFFFFF" # 2 — white
+  - "#104362" # 3 — dark blue
+  - "#000000" # 4 — black
+
+defaults:
+  fg: 2
+  font:
+    name: "Noto Sans Mono"
+    size: 28
+    weight: 400
+
+params:
+  bg_color:
+    description: "Background color"
+    default: "#104362"
+    type: color
+  bg_image:
+    description: "Background image URL (optional, over bg_color)"
+    default: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    type: url
+  author:
+    description: "Author name"
+    default: "BRUNO ADELÉ"
+    style:
+      font:
+        size: 16
+        weight: 400
+  avatar:
+    description: "Avatar image URL"
+    default: "https://avatars.githubusercontent.com/badele"
+    type: url
+  title:
+    description: "Main title"
+    required: true
+    default: "SLIDE GENERATOR"
+    style:
+      fg: 1
+      font:
+        name: Asap Sharp
+        size: 96
+        weight: 900
+  description:
+    description: "Body text (multi-line, use [FG=N] [BG=N] [FN=name] [FS=N] [FW=N] for inline style)"
+    default: "GENERATE [FG=3 BG=1]CLEAN[/], IMPACTFUL SLIDES\nFOR YOUR SOCIAL MEDIA POSTS [FG=3 BG=1]IN SECONDS[/]"
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: Asap Sharp
+        size: 36
+        weight: 900
+      split: true
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      position: relative
+      width: 1200
+      height: 675
+      backgroundColor: "{{ bg_color }}"
+    children:
+      # Background image layer
+      - type: img
+        props:
+          src: "{{ bg_image }}"
+          style:
+            position: absolute
+            top: 0
+            left: 0
+            width: 1200
+            height: 675
+            objectFit: cover
+
+      # Content layer
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            position: relative
+            width: 1200
+            height: 675
+            padding: "48px 58px"
+          children:
+            # Main title
+            - type: span
+              props:
+                param: title
+                style:
+                  lineHeight: 1.0
+                  marginBottom: 24
+                children: "{{ title }}"
+
+            # Description — one background band per line (split from description.style.split)
+            - type: lines
+              props:
+                param: description
+                containerStyle:
+                  gap: 6
+                style:
+                  padding: "4px 10px"
+                children: "{{ description }}"
+
+            # Spacer
+            - type: div
+              props:
+                style:
+                  flex: 1
+
+            # Footer: avatar + author (bottom-right, discreet)
+            - type: div
+              props:
+                style:
+                  display: flex
+                  justifyContent: flex-end
+                  alignItems: center
+                  gap: 12
+                children:
+                  - type: span
+                    props:
+                      param: author
+                      style:
+                        opacity: 0.5
+                      children: "{{ author }}"
+                  - type: img
+                    props:
+                      src: "{{ avatar }}"
+                      style:
+                        width: 36
+                        height: 36
+                        borderRadius: 18
+                        objectFit: cover
+                        opacity: 0.7

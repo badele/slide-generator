@@ -1,0 +1,163 @@
+version: "1"
+name: cardlabel
+description: Carte métrique — titre, description, grande valeur en bas à droite
+output:
+  width: 1200
+  height: 675
+fonts:
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-900.ttf
+    weight: 900
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-700.ttf
+    weight: 700
+  - family: Montserrat
+    path: resources/fonts/Montserrat-400.ttf
+    weight: 400
+  - family: Montserrat
+    path: resources/fonts/Montserrat-700.ttf
+    weight: 700
+palette:
+  - "#1A1A2E"
+  - "#FFFFFF"
+  - "#F5F0E8"
+  - "#0D9488"
+  - "#F97316"
+  - "#EC4899"
+  - "#6366F1"
+  - "#64748B"
+defaults:
+  fg: 2
+  font:
+    name: BarlowCondensed
+    size: 36
+    weight: 700
+params:
+  background:
+    description: Couleur de fond
+    default: 1
+    type: color
+  bg_image:
+    description: Image de fond (URL ou data:URI)
+    default: ""
+    type: url
+    group: background
+  card_bg:
+    description: Couleur de la carte
+    default: 2
+    type: color
+  accent:
+    description: "Couleur d'accentuation (titre, point, valeur) — ex: #0D9488"
+    default: "#0D9488"
+    type: color
+  title:
+    description: Titre court en majuscules
+    default: CLIMAT
+    style:
+      font:
+        name: BarlowCondensed
+        size: 28
+        weight: 700
+  description:
+    description: Description ou contexte de la métrique
+    default: "Part des émissions liées\naux transports urbains"
+    type: textarea
+    style:
+      font:
+        name: Montserrat
+        size: 26
+        weight: 400
+  value:
+    description: "Valeur principale à afficher (ex: 20%, ×2.4, 10–18%)"
+    default: "20%"
+    style:
+      font:
+        name: BarlowCondensed
+        size: 124
+        weight: 900
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+      alignItems: center
+      justifyContent: center
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          src: "{{ bg_image }}"
+          width: 1200
+          height: 675
+      - type: div
+        props:
+          style:
+            display: flex
+            width: 960
+            height: 480
+            backgroundColor: "{{ card_bg }}"
+            borderRadius: 24
+            flexDirection: column
+            padding: 52px 56px 44px 56px
+            position: relative
+          children:
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: row
+                  alignItems: center
+                  gap: 14
+                  marginBottom: 20
+                children:
+                  - type: div
+                    props:
+                      style:
+                        width: 14
+                        height: 14
+                        borderRadius: 7
+                        backgroundColor: "{{ accent }}"
+                        flexShrink: 0
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: BarlowCondensed
+                        fontSize: 26
+                        fontWeight: 700
+                        color: "{{ accent }}"
+                        letterSpacing: 3
+                        textTransform: uppercase
+                      children: "{{ title }}"
+            - type: lines
+              props:
+                style:
+                  fontFamily: Montserrat
+                  fontSize: 28
+                  fontWeight: 400
+                  color: "#64748B"
+                  lineHeight: 1.4
+                children: "{{ description }}"
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flex: 1
+            - type: div
+              props:
+                style:
+                  display: flex
+                  justifyContent: flex-end
+                  alignItems: flex-end
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: BarlowCondensed
+                        fontSize: 124
+                        fontWeight: 900
+                        color: "{{ accent }}"
+                        lineHeight: 1
+                      children: "{{ value }}"

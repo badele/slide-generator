@@ -1,0 +1,230 @@
+version: "1"
+name: quiafuite
+description: C'est qui qui a fuité aujourd'hui ? — terminal rétro, tracker de fuites
+output:
+  width: 1200
+  height: 675
+fonts:
+  - family: VT323
+    path: resources/fonts/VT323-400.ttf
+    weight: 400
+palette:
+  - "#0A0A0A"
+  - "#FFFFFF"
+  - "#666666"
+  - "#22FF44"
+  - "#FF9500"
+  - "#FF4444"
+defaults:
+  fg: 3
+  font:
+    name: VT323
+    size: 40
+    weight: 400
+params:
+  background:
+    description: Couleur de fond
+    default: 1
+    type: color
+  company:
+    description: Entité / entreprise qui a fuité
+    required: true
+    default: MÉGABANQUE SA
+    style:
+      fg: 4
+      font:
+        name: VT323
+        size: 100
+        weight: 400
+  data:
+    description: "Types de données exposées (ex: email · téléphone · mot de passe)"
+    default: email · téléphone · mot de passe
+  records:
+    description: "Nombre de comptes/lignes affectés (ex: 12 000 000)"
+    default: 12 000 000
+  date:
+    description: "Date de la fuite (ex: 2025-01-15)"
+    default: "2025-01-15"
+  status:
+    description: "Fiabilité : CONFIRMÉ, CRÉDIBLE ou NON VÉRIFIÉ"
+    default: CONFIRMÉ
+  status_color:
+    description: Couleur du statut (4=vert confirmé, 5=orange crédible, 6=rouge douteux)
+    default: "#FF4444"
+    type: color
+    group: status
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 675
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            alignItems: flex-start
+            justifyContent: center
+            width: 1200
+            height: 675
+            padding: 48px 64px
+          children:
+            - type: span
+              props:
+                style:
+                  fontFamily: VT323
+                  fontSize: 34
+                  fontWeight: 400
+                  color: "#666666"
+                  letterSpacing: 3
+                children: "> ALERTE FUITE DE DONNÉES // bonjourlafuite.eu.org"
+            - type: div
+              props:
+                style:
+                  height: 2
+                  width: 1072
+                  backgroundColor: "#22FF44"
+                  opacity: 0.5
+                  marginTop: 8
+                  marginBottom: 14
+            - type: span
+              props:
+                style:
+                  fontFamily: VT323
+                  fontSize: 52
+                  fontWeight: 400
+                  color: "#666666"
+                  letterSpacing: 2
+                children: C'EST QUI QUI A FUITÉ AUJOURD'HUI ?
+            - type: span
+              props:
+                param: company
+                style:
+                  letterSpacing: 3
+                  lineHeight: 1
+                  marginTop: 4
+                  marginBottom: 10
+                children: "{{ company }}"
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 0
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "#555555"
+                        width: 200
+                      children: "DONNÉES  :"
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "#AAAAAA"
+                        letterSpacing: 1
+                      children: "{{ data }}"
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 0
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "#555555"
+                        width: 200
+                      children: "RECORDS  :"
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "#FFFFFF"
+                        letterSpacing: 1
+                      children: "{{ records }} comptes"
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 0
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "#555555"
+                        width: 200
+                      children: "DATE     :"
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "#AAAAAA"
+                      children: "{{ date }}"
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 0
+                  marginTop: 2
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "#555555"
+                        width: 200
+                      children: "STATUT   :"
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: VT323
+                        fontSize: 38
+                        fontWeight: 400
+                        color: "{{ status_color }}"
+                        letterSpacing: 2
+                      children: ">> {{ status }}"
+            - type: div
+              props:
+                style:
+                  height: 2
+                  width: 1072
+                  backgroundColor: "#22FF44"
+                  opacity: 0.5
+                  marginTop: 14
+                  marginBottom: 8
+            - type: span
+              props:
+                style:
+                  fontFamily: VT323
+                  fontSize: 30
+                  fontWeight: 400
+                  color: "#444444"
+                  letterSpacing: 3
+                children: "[ FIN DE TRANSMISSION ]"

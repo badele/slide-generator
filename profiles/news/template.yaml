@@ -1,0 +1,179 @@
+version: "1"
+name: news
+description: "News article card — category, headline, summary, author, date"
+output:
+  width: 1080
+  height: 1080
+
+fonts:
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-400.ttf"
+    weight: 400
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-700.ttf"
+    weight: 700
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-900.ttf"
+    weight: 900
+
+palette:
+  - "#111111" # 1 — dark background
+  - "#FFFFFF" # 2 — white
+  - "#999999" # 3 — gray (secondary text)
+  - "#CCCCCC" # 4 — light gray
+
+defaults:
+  fg: 2
+  font:
+    name: "Montserrat"
+    size: 28
+    weight: 400
+
+params:
+  background:
+    description: "Background color"
+    default: 1
+    type: color
+  bg_image:
+    description: "Background image URL (optional)"
+    default: ""
+    type: url
+  category:
+    description: "Category label"
+    default: "POLITIQUE"
+    style:
+      fg: 3
+      font:
+        name: Montserrat
+        size: 20
+        weight: 700
+  title:
+    description: "Article headline"
+    required: true
+    default: "Budget : le gouvernement donne un nouveau coup de rabot en ciblant la mission écologie"
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 68
+        weight: 900
+  body:
+    description: "Article summary"
+    default: "Pour éviter un dérapage trop important du déficit en 2026, le gouvernement a annulé 500 millions d'euros de crédits et « surgelé » 783 autres millions, vendredi 11 septembre."
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 30
+        weight: 400
+  author:
+    description: "Author byline"
+    default: "Par Denis Cosnard et Raphaëlle Besse Desmoulières"
+    style:
+      fg: 3
+      font:
+        name: Montserrat
+        size: 24
+        weight: 400
+  date:
+    description: "Publication date/time"
+    default: "Hier à 20h23, modifié à 07h53"
+    style:
+      fg: 3
+      font:
+        name: Montserrat
+        size: 24
+        weight: 400
+  reading_time:
+    description: "Estimated reading time"
+    default: "Lecture 2 min"
+    style:
+      fg: 3
+      font:
+        name: Montserrat
+        size: 24
+        weight: 400
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      position: relative
+      width: 1080
+      height: 1080
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          src: "{{ bg_image }}"
+          width: 1080
+          height: 1080
+
+      # Content layer
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            position: relative
+            width: 1080
+            height: 1080
+            padding: "60px 64px"
+          children:
+            # Category
+            - type: span
+              props:
+                param: category
+                style:
+                  marginBottom: 12
+                  letterSpacing: 2
+                children: "{{ category }}"
+
+            # Headline
+            - type: span
+              props:
+                param: title
+                style:
+                  lineHeight: 1.15
+                  marginBottom: 28
+                children: "{{ title }}"
+
+            # Body
+            - type: span
+              props:
+                param: body
+                style:
+                  lineHeight: 1.5
+                  marginBottom: 24
+                children: "{{ body }}"
+
+            # Author
+            - type: span
+              props:
+                param: author
+                style:
+                  marginBottom: 8
+                children: "{{ author }}"
+
+            # Date
+            - type: span
+              props:
+                param: date
+                style:
+                  marginBottom: 8
+                children: "{{ date }}"
+
+            # Reading time
+            - type: span
+              props:
+                param: reading_time
+                children: "{{ reading_time }}"
+
+            # Spacer
+            - type: div
+              props:
+                style:
+                  flex: 1

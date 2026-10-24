@@ -1,0 +1,27 @@
+# Google Fonts download configuration
+# Files are saved to downloadDir as TTF — gitignored, cached locally.
+# Run: just load-fonts  (or npm run load-fonts)
+downloadDir: resources/fonts
+
+fonts:
+  - family: Montserrat
+    weights: [100, 300, 400, 600, 700, 900]
+    styles: [normal, italic]
+  - family: Noto Sans Mono
+    weights: [100, 300, 400, 600, 700, 900]
+    styles: [normal, italic]
+  - family: Bowlby One SC
+    weights: [100, 300, 400, 600, 700, 900]
+    styles: [normal, italic]
+  - family: Asap Sharp
+    weights: [900]
+    styles: [normal]
+  - family: Caveat
+    weights: [400, 700]
+    styles: [normal]
+  - family: Barlow Condensed
+    weights: [700, 900]
+    styles: [normal]
+  - family: VT323
+    weights: [400]
+    styles: [normal]

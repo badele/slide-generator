@@ -1,0 +1,10 @@
+services:
+  slide-generator:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./profiles:/app/profiles
+      - ./resources:/app/resources
+    environment:
+      - NODE_ENV=production

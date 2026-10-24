@@ -1,0 +1,155 @@
+version: "1"
+name: clan
+description: Clan.lol — dark teal, title + subtitle + description, logo top-right
+output:
+  width: 1200
+  height: 675
+fonts:
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-900.ttf
+    weight: 900
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-700.ttf
+    weight: 700
+palette:
+  - "#253A3B"
+  - "#FFD300"
+  - "#FFFFFF"
+  - "#2AEB6D"
+  - "#253a3b"
+defaults:
+  fg: 3
+  font:
+    name: BarlowCondensed
+    size: 36
+    weight: 700
+params:
+  background:
+    description: Background color
+    default: 1
+    type: color
+  bg_image:
+    description: Background visual URL (optional, overlaid faintly)
+    default: http://localhost:3000/clan_background.png
+    type: url
+  logo:
+    description: Logo URL (top-right)
+    default: data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgaWQ9ImxvZ28iCiAgIGNsYXNzPSJ3LWZ1bGwiCiAgIHZpZXdCb3g9IjAgMCAxMzYuMDYgNTYuNjkiCiAgIHZlcnNpb249IjEuMSIKICAgc29kaXBvZGk6ZG9jbmFtZT0idGVzdC5zdmciCiAgIGlua3NjYXBlOnZlcnNpb249IjEuNC4yIChlYmYwZTk0MGQwLCAyMDI1LTA1LTA4KSIKICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiCiAgIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcwogICAgIGlkPSJkZWZzMyIgLz4KICA8c29kaXBvZGk6bmFtZWR2aWV3CiAgICAgaWQ9Im5hbWVkdmlldzMiCiAgICAgcGFnZWNvbG9yPSIjZmZmZmZmIgogICAgIGJvcmRlcmNvbG9yPSIjMDAwMDAwIgogICAgIGJvcmRlcm9wYWNpdHk9IjAuMjUiCiAgICAgaW5rc2NhcGU6c2hvd3BhZ2VzaGFkb3c9IjIiCiAgICAgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAuMCIKICAgICBpbmtzY2FwZTpwYWdlY2hlY2tlcmJvYXJkPSIwIgogICAgIGlua3NjYXBlOmRlc2tjb2xvcj0iI2QxZDFkMSIKICAgICBpbmtzY2FwZTp6b29tPSI5LjA1ODQwOTEiCiAgICAgaW5rc2NhcGU6Y3g9Ijc4Ljk4NzM4IgogICAgIGlua3NjYXBlOmN5PSIyOS41ODU3NjkiCiAgICAgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxODk4IgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjEwMzkiCiAgICAgaW5rc2NhcGU6d2luZG93LXg9IjEwIgogICAgIGlua3NjYXBlOndpbmRvdy15PSIyOSIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9ImxvZ28iIC8+CiAgPHBhdGgKICAgICBkPSJNMzMuMTUsMTIuNmg2LjEzYy42NSwwLDEuMTgtLjUzLDEuMTgtMS4xOHYtNC43MWMwLS42NS0uNTMtMS4xOC0xLjE4LTEuMThoLTEuOTNjLS42MiwwLTEuMTMtLjUxLTEuMTMtMS4xM3YtMS45M2MwLS42NS0uNTMtMS4xOC0xLjE4LTEuMThoLTE2Ljk3Yy0uNjUsMC0xLjE4LjUzLTEuMTgsMS4xOHYxLjkzYzAsLjYyLS41MSwxLjEzLTEuMTMsMS4xM2gtMS45M2MtLjY1LDAtMS4xOC41My0xLjE4LDEuMTh2MS45M2MwLC42Mi0uNTEsMS4xMy0xLjEzLDEuMTNoLTEuOTNjLS42NSwwLTEuMTguNTMtMS4xOCwxLjE4LDAsMC0uMjguNy0uMjgsMTQuMDcsMCwxMS45Ni4yOCwxMy4yNi4yOCwxMy4yNiwwLC42NS41MywxLjE4LDEuMTgsMS4xOGgxLjkzYy42MiwwLDEuMTMuNTEsMS4xMywxLjEzdjEuOThjMCwuNjIuNTEsMS4xMywxLjEzLDEuMTNoMS45OGMuNjIsMCwxLjEzLjUxLDEuMTMsMS4xM3YxLjkzYzAsLjY1LjUzLDEuMTgsMS4xOCwxLjE4aDE2Ljk3Yy42NSwwLDEuMTgtLjUzLDEuMTgtMS4xOHYtMS45M2MwLS42Mi41MS0xLjEzLDEuMTMtMS4xM2gzLjEyYy42NSwwLDEuMTgtLjUzLDEuMTgtMS4xOHYtNS42MmMwLS42NS0uNTMtMS4xOC0xLjE4LTEuMThoLTcuMzJjLS42NSwwLTEuMTguNTMtMS4xOCwxLjE4djIuODRjMCwuNjItLjUxLDEuMTMtMS4xMywxLjEzaC04LjU4Yy0uNjIsMC0xLjEzLS41MS0xLjEzLTEuMTN2LTIuODhjMC0uNjUtLjUzLTEuMTgtMS4xOC0xLjE4aC0yLjg4Yy0uNjIsMC0uOTguMDktMS4xMy0xLjEzLS4wNS0uMzktLjA3LS44Ny0uMTEtMS41Mi0uMDktMS42Mi0uMTctMy4zMy0uMTctOC4xOSwwLTYuOC4xOC0xMC4xNy4yOC0xMS4xMnMuNTEtMS4xMywxLjEzLTEuMTNoMi44OGMuNjUsMCwxLjE4LS41MywxLjE4LTEuMTh2LTEuOTNjMC0uNjIuNTEtMS4xMywxLjEzLTEuMTNoOC41OGMuNjIsMCwxLjEzLjUxLDEuMTMsMS4xM3YxLjkzYzAsLjY1LjUzLDEuMTgsMS4xOCwxLjE4WiIKICAgICBpZD0icGF0aDEiCiAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZiIgLz4KICA8cGF0aAogICAgIGQ9Ik0xMS43Nyw0Ni41N2gtMS4zOWMtLjI3LDAtLjQ5LS4yMi0uNDktLjQ5di0xLjM5YzAtLjU0LS40NC0uOTgtLjk4LS45OGgtMy43NmMtLjU0LDAtLjk4LjQ0LS45OC45OHYxLjM5YzAsLjI3LS4yMi40OS0uNDkuNDloLTEuMzljLS41NCwwLS45OC40NC0uOTguOTh2My43NmMwLC41NC40NC45OC45OC45OGgxLjM5Yy4yNywwLC40OS4yMi40OS40OXYxLjM5YzAsLjU0LjQ0Ljk4Ljk4Ljk4aDMuNzZjLjU0LDAsLjk4LS40NC45OC0uOTh2LTEuMzljMC0uMjcuMjItLjQ5LjQ5LS40OWgxLjM5Yy41NCwwLC45OC0uNDQuOTgtLjk4di0zLjc2YzAtLjU0LS40NC0uOTgtLjk4LS45OFoiCiAgICAgaWQ9InBhdGgyIgogICAgIHN0eWxlPSJmaWxsOiNmZmZmZmYiIC8+CiAgPHBhdGgKICAgICBkPSJNMTMzLjYzLDIyLjVoLTEuMDRjLS42MiwwLTEuMTMtLjUxLTEuMTMtMS4xM3YtMS45OGMwLS42Mi0uNTEtMS4xMy0xLjEzLTEuMTNoLTEuOThjLS42MiwwLTEuMTMtLjUxLTEuMTMtMS4xM3YtMS45OGMwLS42Mi0uNTEtMS4xMy0xLjEzLTEuMTNoLTEyLjcyYy0uNjIsMC0xLjEzLjUxLTEuMTMsMS4xM3YyLjRjMCwuMzEtLjI1LjU3LS41Ny41N2gtMi4xNmMtLjMxLDAtLjUxLS4xOS0uNTctLjU3bC0uMzgtMi4zN2MtLjA5LS42Ni0uNDEtMS4wOC0xLjA4LTEuMDhsLTIuMjItLjA4aC0xLjI1Yy0xLjI1LDAtMi4yNiwxLjAxLTIuMjYsMi4yNnYyMi4zNWMwLDEuMjUtMS4wMSwyLjI2LTIuMjYsMi4yNmgtNS4wOWMtLjYyLDAtMS4xMy0uNTEtMS4xMy0xLjEzdi0xNi4yNWMwLTcuMTYtNC41My0xMS4zOC0xMy42OC0xMS4zOC04LjMyLDAtMTIuMzMsMy4wNS0xMi44Niw4Ljc0LS4wNy43LjMzLDEuMSwxLjAzLDEuMWw0LjcxLjM0Yy42OS4wNi45Ny0uMzMsMS4xLTEsLjQ3LTIuMjYsMi41My0zLjUzLDYuMDMtMy41Myw0LjI5LDAsNi4wOSwyLjAzLDYuMDksNS40OXYxLjgzYzAsLjYyLS41MSwxLjEzLTEuMTMsMS4xM2gtLjIxcy01Ljg5LS4wMS01Ljg5LS4wMWMtOS4zNSwwLTEzLjk0LDMuNjItMTMuOTQsMTAuODcsMCwyLjMuNDcsNC4yNywxLjM3LDUuODloLS4zNmMtMS4wNy0uNzctMS40OS0xLjM1LTEuODUtMS43Ny0uMTYtLjE4LS40LS4zMy0uODItLjMzaC0xLjA0cy0zLjYzLDAtMy42MywwaC0xLjk4Yy0xLjI1LDAtMi4yNi0xLjAxLTIuMjYtMi4yNlYyLjM2YzAtLjY3LS40LTEuMDctMS4wOC0xLjA3aC01LjExYy0uNjIsMC0xLjEzLjQ1LTEuMTMsMS4wN2wtLjAyLDMyLjg3djguMmMwLDIuNSwyLjAzLDQuNTMsNC41Myw0LjUzaDMwLjg0YzUuMTMtLjI2LDUuMjItMi4wNyw1LjcyLTIuNzUuMzksMi4xNiwxLjEzLDIuNjMsMi44NiwyLjczLDQuOTQuMDcsMTEuMTMuMDIsMTEuMjIuMDJoMy4wMmMyLjUsMCw0LjA1LTIuMDMsNC4wNS00LjUzbC40Ny0xNi41YzAtLjYyLjUxLTEuMTMsMS4xMy0xLjEzaDEuMjNjLjUyLDAsLjk0LS40Mi45NC0uOTR2LTIuMTdjMC0uNjIuNTEtMS4xMywxLjEzLTEuMTNoNy4yYzEuMTMsMCwyLjA0LjkxLDIuMDQsMi4wNHYxLjk3YzAsLjY1LjUzLDEuMTgsMS4xOCwxLjE4aDIuNWMuMzEsMCwuNTcuMjUuNTcuNTd2MTkuNTJjMCwuNjIuNTEsMS4xMywxLjEzLDEuMTNoNC4xNWMxLjI1LDAsMi4yNi0xLjAxLDIuMjYtMi4yNnYtMjIuMDdjMC0uNjItLjUxLTEuMTMtMS4xMy0xLjEzWk04Ni4wMSwzNC4xMWMwLDUuNC0zLjcyLDguOTEtOS4zLDguOTEtNC4wMSwwLTUuOTQtMS43OS01Ljk0LTUuMywwLTMuOSwyLjMzLTUuODMsNy4wNS01LjgzaDguMTl2Mi4yMloiCiAgICAgaWQ9InBhdGgzIgogICAgIHN0eWxlPSJmaWxsOiNmZmZmZmYiIC8+Cjwvc3ZnPgo=
+    type: url
+  logo_height:
+    description: Logo height (px)
+    default: "54"
+    type: number
+    group: logo
+  overlay_color:
+    description: Overlay color on top of background image
+    default: "#253a3b"
+    type: color
+  overlay_opacity:
+    description: Overlay opacity (0 = transparent, 1 = opaque)
+    default: "0.97"
+    type: number
+    group: overlay_color
+  title:
+    description: Main title
+    required: true
+    default: KILL THE CLOUD
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 96
+        weight: 900
+  subtitle:
+    description: Subtitle
+    default: BUILD YOUR OWN DARKNET
+    style:
+      fg: 3
+      font:
+        name: BarlowCondensed
+        size: 52
+        weight: 700
+  description:
+    description: Description text
+    default: |-
+      DISCOVER THE SIMPLEST WAY TO RE-ENTER INDEPENDENT COMPUTING
+      WITH OUR FRAMEWORK. PLACING CONTROL DIRECTLY AT YOUR FINGERTIPS.
+    type: textarea
+    style:
+      fg: 4
+      font:
+        name: BarlowCondensed
+        size: 40
+        weight: 700
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          src: "{{ bg_image }}"
+          width: 1200
+          height: 675
+      - type: div
+        props:
+          style:
+            position: absolute
+            top: 0
+            left: 0
+            width: 1200
+            height: 675
+            backgroundColor: "{{ overlay_color }}"
+            opacity: "{{ overlay_opacity }}"
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            width: 1200
+            height: 675
+            padding: 20px 58px 58px 58px
+          children:
+            - type: div
+              props:
+                style:
+                  display: flex
+                  justifyContent: flex-end
+                  marginBottom: 0
+                children:
+                  - type: image
+                    props:
+                      src: "{{ logo }}"
+                      imgHeight: "{{ logo_height }}"
+            - type: div
+              props:
+                style:
+                  flex: 1
+            - type: lines
+              props:
+                param: title
+                style:
+                  lineHeight: 1
+                containerStyle:
+                  marginBottom: 8
+                children: "{{ title }}"
+            - type: span
+              props:
+                param: subtitle
+                children: "{{ subtitle }}"
+            - type: div
+              props:
+                style:
+                  height: 28
+            - type: lines
+              props:
+                param: description
+                style:
+                  lineHeight: 1.3
+                children: "{{ description }}"
