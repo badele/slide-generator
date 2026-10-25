@@ -152,6 +152,8 @@ export function Playground({ templates }: Props) {
   const [ogError, setOgError] = useState<string | null>(null);
   const [ogLoading, setOgLoading] = useState(false);
   const [leftWidth, setLeftWidth] = useState(420);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState<'settings' | 'preview'>('settings');
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const dragStartWidth = useRef(0);
@@ -253,6 +255,14 @@ export function Playground({ templates }: Props) {
     };
   }, []);
 
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    setIsMobile(mq.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   // Initialize params + style state when template changes
   useEffect(() => {
     if (!selectedTemplate) return;
@@ -325,8 +335,9 @@ export function Playground({ templates }: Props) {
   useEffect(() => {
     if (tab === 'template' && !hasEdits && !hasLargeParams) {
       setPreviewUrl(buildTemplateUrl());
+      if (isMobile) setMobilePanel('preview');
     }
-  }, [tab, hasEdits, hasLargeParams, buildTemplateUrl]);
+  }, [tab, hasEdits, hasLargeParams, buildTemplateUrl, isMobile]);
 
   // Update preview: template mode with edits OR large params → debounced POST
   useEffect(() => {
@@ -345,13 +356,14 @@ export function Playground({ templates }: Props) {
         if (res.ok) {
           const blob = await res.blob();
           setPreviewUrl(URL.createObjectURL(blob));
+          if (isMobile) setMobilePanel('preview');
         }
       } finally {
         setIsLoading(false);
       }
     }, 600);
     return () => clearTimeout(timer);
-  }, [tab, hasEdits, hasLargeParams, baseYaml, buildModifiedYaml, params]);
+  }, [tab, hasEdits, hasLargeParams, baseYaml, buildModifiedYaml, params, isMobile]);
 
   useEffect(() => {
     if (tab !== 'free') return;
@@ -370,6 +382,7 @@ export function Playground({ templates }: Props) {
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
             setPreviewUrl(url);
+            if (isMobile) setMobilePanel('preview');
           }
         } finally {
           setIsLoading(false);
@@ -377,7 +390,7 @@ export function Playground({ templates }: Props) {
       }
     }, 600);
     return () => clearTimeout(timer);
-  }, [tab, yamlText, freeParams, validateYaml]);
+  }, [tab, yamlText, freeParams, validateYaml, isMobile]);
 
   const handleDownload = async () => {
     if (!previewUrl) return;
@@ -465,7 +478,7 @@ export function Playground({ templates }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen relative">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-3 bg-gray-900 border-b border-gray-800">
         <div className="flex items-center gap-3">
@@ -504,10 +517,38 @@ export function Playground({ templates }: Props) {
       </header>
 
       <div className="flex flex-1 min-h-0">
+        {/* Mobile panel toggle */}
+        {isMobile && (
+          <div className="absolute top-0 left-0 right-0 z-10 flex bg-gray-900 border-b border-gray-800">
+            <button
+              onClick={() => setMobilePanel('settings')}
+              className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                mobilePanel === 'settings'
+                  ? 'text-white bg-gray-800 border-b-2 border-blue-500'
+                  : 'text-gray-400 hover:text-gray-200'
+              }`}
+            >
+              ⚙ Settings
+            </button>
+            <button
+              onClick={() => setMobilePanel('preview')}
+              className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                mobilePanel === 'preview'
+                  ? 'text-white bg-gray-800 border-b-2 border-blue-500'
+                  : 'text-gray-400 hover:text-gray-200'
+              }`}
+            >
+              🖼 Preview
+            </button>
+          </div>
+        )}
+
         {/* Left panel */}
         <div
-          className="flex flex-col border-r border-gray-800 min-h-0 shrink-0"
-          style={{ width: leftWidth }}
+          className={`flex flex-col border-r border-gray-800 min-h-0 shrink-0 ${
+            isMobile && mobilePanel !== 'settings' ? 'hidden' : ''
+          }`}
+          style={isMobile ? { width: '100%', paddingTop: 42 } : { width: leftWidth }}
         >
           {/* Tabs */}
           <div className="flex border-b border-gray-800">
@@ -613,7 +654,9 @@ export function Playground({ templates }: Props) {
         {/* Drag handle */}
         <div
           onMouseDown={handleDividerMouseDown}
-          className="w-1 shrink-0 bg-gray-800 hover:bg-blue-500 active:bg-blue-400 cursor-col-resize transition-colors"
+          className={`w-1 shrink-0 bg-gray-800 hover:bg-blue-500 active:bg-blue-400 cursor-col-resize transition-colors ${
+            isMobile ? 'hidden' : ''
+          }`}
           title="Drag to resize"
         />
 
@@ -623,7 +666,8 @@ export function Playground({ templates }: Props) {
             tab === 'og'
               ? 'overflow-y-auto p-6 items-center'
               : 'items-center justify-center p-8 overflow-hidden'
-          }`}
+          } ${isMobile && mobilePanel !== 'preview' ? 'hidden' : ''}`}
+          style={isMobile ? { paddingTop: 42 } : undefined}
         >
           {tab === 'og' ? (
             <OgPreviewPanel data={ogData} url={ogUrl} loading={ogLoading} />
