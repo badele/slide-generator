@@ -736,9 +736,17 @@ function TemplatePanel({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-xs text-gray-400 mb-1.5 uppercase tracking-wide">
-          Template
-        </label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="text-xs text-gray-400 uppercase tracking-wide">Template</label>
+          <a
+            href="https://github.com/badele/slide-generator"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-gray-600 hover:text-gray-300 transition-colors"
+          >
+            ★ Contribuer
+          </a>
+        </div>
         <div className="flex gap-2">
           <select
             value={selected?.name ?? ''}
