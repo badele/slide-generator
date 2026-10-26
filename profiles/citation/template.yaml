@@ -40,6 +40,23 @@ params:
     default: ""
     type: url
 
+  intro:
+    description: "Introduction text (optional, shown before the quote)"
+    default: ""
+    type: textarea
+    style:
+      fg: 4
+      font:
+        name: Montserrat
+        size: 26
+        weight: 400
+
+  intro_color:
+    description: "Introduction text color"
+    default: 4
+    type: color
+    group: intro
+
   quote:
     description: "Citation text"
     required: true
@@ -124,7 +141,6 @@ element:
             height: 1080
             padding: "72px 72px 0px 72px"
           children:
-
             # Citation block (flex: 1 — takes all available space)
             - type: div
               props:
@@ -134,6 +150,17 @@ element:
                   flex: 1
                   justifyContent: flex-start
                 children:
+                  # Introduction text (italic, smaller, optional)
+                  - type: lines
+                    props:
+                      param: intro
+                      style:
+                        lineHeight: 1.4
+                        fontStyle: italic
+                        color: "{{ intro_color }}"
+                      containerStyle:
+                        marginBottom: 20
+                      children: "{{ intro }}"
 
                   # Opening quote mark
                   - type: span
@@ -144,7 +171,7 @@ element:
                         fontWeight: 900
                         color: "{{ quote_color }}"
                         lineHeight: 0.6
-                        marginBottom: 24
+                        marginBottom: -60
                         opacity: 0.25
                       children: "“"
 
@@ -192,7 +219,6 @@ element:
                   marginRight: -72
                   gap: 10
                 children:
-
                   # Reply label
                   - type: span
                     props:

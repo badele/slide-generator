@@ -48,7 +48,63 @@ params:
     default: "22"
     type: number
     group: brand_logo
-  title:
+  img_left:
+    description: Left side image URL (optional)
+    default: ""
+    type: url
+  img_left_width:
+    description: Width px
+    default: "160"
+    type: number
+    group: img_left
+  img_left_height:
+    description: Height px
+    default: ""
+    type: number
+    group: img_left
+  img_right:
+    description: Right side image URL (optional)
+    default: ""
+    type: url
+  img_right_width:
+    description: Width px
+    default: "160"
+    type: number
+    group: img_right
+  img_right_height:
+    description: Height px
+    default: ""
+    type: number
+    group: img_right
+  img_top:
+    description: Top center image URL (optional)
+    default: ""
+    type: url
+  img_top_width:
+    description: Width px
+    default: ""
+    type: number
+    group: img_top
+  img_top_height:
+    description: Height px
+    default: "90"
+    type: number
+    group: img_top
+  img_bottom:
+    description: Bottom center image URL (optional)
+    default: ""
+    type: url
+  img_bottom_width:
+    description: Width px
+    default: ""
+    type: number
+    group: img_bottom
+  img_bottom_height:
+    description: Height px
+    default: "90"
+    type: number
+    group: img_bottom
+  text:
     description: Main headline — use \n for line breaks
     required: true
     default: |-
@@ -63,7 +119,7 @@ params:
         name: BarlowCondensed
         size: 128
         weight: 900
-  title_color:
+  text_color:
     description: Headline color
     default: 2
     type: color
@@ -85,27 +141,31 @@ element:
       height: 675
       position: relative
     children:
+      # Full-slide background (lifted to root div via extraStyle)
       - type: background
         props:
           color: "{{ background }}"
           width: 1200
           height: 675
+
+      # Content layout on top of background
       - type: div
         props:
           style:
             display: flex
             flexDirection: column
-            alignItems: center
             width: 1200
             height: 675
-            padding: 44px 80px 44px 80px
           children:
+            # Brand bar (height 60px)
             - type: div
               props:
                 style:
                   display: flex
                   flexDirection: row
                   alignItems: center
+                  justifyContent: center
+                  height: 60
                   gap: 10
                 children:
                   - type: image
@@ -118,30 +178,87 @@ element:
                       style:
                         letterSpacing: 2
                       children: "{{ brand }}"
+
+            # Middle row (555px = 675 - 60 brand - 60 tagline)
             - type: div
               props:
                 style:
                   display: flex
+                  flexDirection: row
                   flex: 1
-                  flexDirection: column
-                  justifyContent: center
-                  alignItems: center
                 children:
-                  - type: lines
+                  # Left image (collapses to 0 when src is empty)
+                  - type: image
                     props:
-                      param: title
+                      src: "{{ img_left }}"
+                      imgWidth: "{{ img_left_width }}"
+                      imgHeight: "{{ img_left_height }}"
+
+                  # Center column
+                  - type: div
+                    props:
                       style:
-                        textAlign: center
-                        lineHeight: 0.95
-                        color: "{{ title_color }}"
-                        textTransform: uppercase
-                      containerStyle:
-                        alignItems: center
-                        gap: 0
-                      children: "{{ title }}"
-            - type: span
+                        display: flex
+                        flexDirection: column
+                        flex: 1
+                      children:
+                        # Top image (collapses to 0 when src is empty)
+                        - type: image
+                          props:
+                            src: "{{ img_top }}"
+                            imgWidth: "{{ img_top_width }}"
+                            imgHeight: "{{ img_top_height }}"
+
+                        # Text area (expands to fill available space)
+                        - type: div
+                          props:
+                            style:
+                              display: flex
+                              flex: 1
+                              flexDirection: column
+                              justifyContent: center
+                              alignItems: center
+                            children:
+                              - type: lines
+                                props:
+                                  param: text
+                                  style:
+                                    textAlign: center
+                                    lineHeight: 0.95
+                                    color: "{{ text_color }}"
+                                    textTransform: uppercase
+                                  containerStyle:
+                                    alignItems: center
+                                    gap: 0
+                                  children: "{{ text }}"
+
+                        # Bottom image (collapses to 0 when src is empty)
+                        - type: image
+                          props:
+                            src: "{{ img_bottom }}"
+                            imgWidth: "{{ img_bottom_width }}"
+                            imgHeight: "{{ img_bottom_height }}"
+
+                  # Right image (collapses to 0 when src is empty)
+                  - type: image
+                    props:
+                      src: "{{ img_right }}"
+                      imgWidth: "{{ img_right_width }}"
+                      imgHeight: "{{ img_right_height }}"
+
+            # Tagline bar (height 60px)
+            - type: div
               props:
-                param: tagline
                 style:
-                  letterSpacing: 3
-                children: "{{ tagline }}"
+                  display: flex
+                  flexDirection: row
+                  alignItems: center
+                  justifyContent: center
+                  height: 60
+                children:
+                  - type: span
+                    props:
+                      param: tagline
+                      style:
+                        letterSpacing: 3
+                      children: "{{ tagline }}"
