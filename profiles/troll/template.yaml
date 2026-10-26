@@ -1,0 +1,201 @@
+version: "1"
+name: troll
+description: "Alerte troll — fiche d'identification d'un troll internet"
+output:
+  width: 1200
+  height: 675
+fonts:
+  - family: BowlbyOneSC
+    path: resources/fonts/BowlbyOneSC-400.ttf
+    weight: 400
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-900.ttf
+    weight: 900
+  - family: Montserrat
+    path: resources/fonts/Montserrat-700.ttf
+    weight: 700
+  - family: Montserrat
+    path: resources/fonts/Montserrat-400.ttf
+    weight: 400
+  - family: Montserrat
+    path: resources/fonts/Montserrat-400-italic.ttf
+    weight: 400
+    style: italic
+palette:
+  - "#0D0D0D"
+  - "#FFFFFF"
+  - "#FF6B00"
+  - "#FFD600"
+  - "#FF3B3B"
+  - "#888888"
+  - "#1A1A1A"
+  - "#CCCCCC"
+defaults:
+  fg: 2
+  font:
+    name: Montserrat
+    size: 32
+    weight: 400
+params:
+  background:
+    description: Couleur de fond
+    default: 1
+    type: color
+  badge:
+    description: Texte du badge d'alerte (barre haute)
+    default: "⚠  TROLL DÉTECTÉ  ⚠"
+    style:
+      fg: 1
+      font:
+        name: BarlowCondensed
+        size: 30
+        weight: 900
+  badge_bg:
+    description: Couleur de fond du badge
+    default: 3
+    type: color
+    group: badge
+  title:
+    description: "Titre principal (\\n pour saut de ligne)"
+    default: "Ce n'est pas de la mauvaise foi,\nc'est un troll !"
+    type: textarea
+    style:
+      fg: 4
+      font:
+        name: BowlbyOneSC
+        size: 54
+        weight: 400
+  items:
+    description: "Caractéristiques du troll (une par ligne)"
+    default: |-
+      → Il veut toujours avoir raison.
+      → Il te fait dire ce que tu n'as pas dit.
+      → Tu le coinces ? Il change de sujet.
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 30
+        weight: 700
+  subtext:
+    description: "Remarque intermédiaire (optionnel)"
+    default: "Tu peux lui répondre sur un point, il rebondira sur dix autres."
+    type: textarea
+    style:
+      fg: 6
+      font:
+        name: Montserrat
+        size: 26
+        weight: 400
+  footer:
+    description: "Texte de conclusion"
+    default: "Son but n'est pas de débattre, mais de te faire perdre ton temps."
+    type: textarea
+    style:
+      fg: 6
+      font:
+        name: Montserrat
+        size: 24
+        weight: 400
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 675
+
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            width: 1200
+            height: 675
+          children:
+            # Badge bar top
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: row
+                  alignItems: center
+                  justifyContent: center
+                  height: 56
+                  backgroundColor: "{{ badge_bg }}"
+                children:
+                  - type: span
+                    props:
+                      param: badge
+                      style:
+                        letterSpacing: 4
+                        textTransform: uppercase
+                      children: "{{ badge }}"
+
+            # Main content area
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flexDirection: column
+                  flex: 1
+                  padding: 44px 72px 40px 72px
+                children:
+                  # Titre principal
+                  - type: lines
+                    props:
+                      param: title
+                      style:
+                        lineHeight: 1.1
+                      containerStyle:
+                        marginBottom: 28
+                      children: "{{ title }}"
+
+                  # Bullet items
+                  - type: lines
+                    props:
+                      param: items
+                      style:
+                        lineHeight: 1.6
+                      containerStyle:
+                        marginBottom: 20
+                      children: "{{ items }}"
+
+                  # Subtext
+                  - type: lines
+                    props:
+                      param: subtext
+                      style:
+                        lineHeight: 1.4
+                        fontStyle: italic
+                      children: "{{ subtext }}"
+
+                  # Flex spacer
+                  - type: div
+                    props:
+                      style:
+                        flex: 1
+
+                  # Footer
+                  - type: lines
+                    props:
+                      param: footer
+                      style:
+                        lineHeight: 1.4
+                        fontStyle: italic
+                      children: "{{ footer }}"
+
+            # Bottom accent bar
+            - type: div
+              props:
+                style:
+                  height: 6
+                  backgroundColor: "{{ badge_bg }}"
