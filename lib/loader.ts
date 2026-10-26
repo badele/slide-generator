@@ -255,6 +255,8 @@ export function expandSpecialElements(
     const imgStyle: Record<string, any> = {};
     if (imgWidth != null) imgStyle.width = imgWidth;
     if (imgHeight != null) imgStyle.height = imgHeight;
+    const objectFit = node.props?.objectFit;
+    if (objectFit) imgStyle.objectFit = objectFit;
 
     return {
       type: 'div',
@@ -286,9 +288,6 @@ export function expandSpecialElements(
     }
 
     const rawLines = text.split('\n');
-    // Trim leading and trailing blank lines, keep inner blank lines as spacers
-    while (rawLines.length > 0 && rawLines[0].trim() === '') rawLines.shift();
-    while (rawLines.length > 0 && rawLines[rawLines.length - 1].trim() === '') rawLines.pop();
     const lineHeight = Number(style.fontSize ?? 28);
     return {
       type: 'div',

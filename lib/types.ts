@@ -17,6 +17,7 @@ const ElementNodeSchema: z.ZodType<any> = z.lazy(() =>
       imgHeight: z.union([z.number(), z.string()]).nullable().optional(),
       x: z.union([z.number(), z.string()]).nullable().optional(),
       y: z.union([z.number(), z.string()]).nullable().optional(),
+      objectFit: z.string().optional(),
       color: z.string().optional(),
       width: z.union([z.number(), z.string()]).optional(),
       height: z.union([z.number(), z.string()]).optional(),
