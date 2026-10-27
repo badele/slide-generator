@@ -29,7 +29,11 @@ async function getTemplates(): Promise<TemplateInfo[]> {
   }
 }
 
-export default async function Home() {
-  const templates = await getTemplates();
-  return <Playground templates={templates} />;
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const [templates, params] = await Promise.all([getTemplates(), searchParams]);
+  return <Playground templates={templates} initialParams={params} />;
 }
