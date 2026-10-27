@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
   ${_og_description ? `<meta property="og:description" content="${esc(_og_description)}"/>` : ''}
   ${_og_url        ? `<meta property="og:url"         content="${esc(_og_url)}"/>` : ''}
   <meta property="og:image"        content="${esc(imageUrl)}"/>
+  <meta property="og:image:type"   content="image/png"/>
   <meta property="og:image:width"  content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta property="og:type"         content="website"/>
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-store',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
     },
   });
 }
