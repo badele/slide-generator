@@ -43,12 +43,26 @@ export function loadTemplateRaw(name: string): string {
   return fs.readFileSync(tplPath, 'utf8');
 }
 
+function deepMerge(target: any, source: any): any {
+  if (!source || typeof source !== 'object') return target;
+  const result = { ...target };
+  for (const [k, v] of Object.entries(source)) {
+    if (v !== undefined && v && typeof v === 'object' && !Array.isArray(v) && result[k] && typeof result[k] === 'object') {
+      result[k] = deepMerge(result[k], v);
+    } else if (v !== undefined) {
+      result[k] = v;
+    }
+  }
+  return result;
+}
+
 export function parseTemplate(
   yamlStr: string,
   params: Record<string, string> = {}
 ): SlideTemplate {
   // 1. Apply defaults then user params
   const rawParsed = yaml.load(yamlStr) as any;
+
   const rawPalette: string[] = rawParsed?.palette ?? [];
   const defaults: Record<string, string> = {};
   if (rawParsed?.params) {
@@ -81,6 +95,23 @@ export function parseTemplate(
 
   // 4. Parse substituted YAML
   const parsed = yaml.load(substituted) as any;
+
+  // Apply _palette, _defaults, _ps_<key> overrides on the substituted parse result
+  if (params._palette) {
+    const colors = params._palette.split(',').map(s => s.trim()).filter(Boolean);
+    if (colors.length > 0) parsed.palette = colors;
+  }
+  if (params._defaults) {
+    try { parsed.defaults = deepMerge(parsed.defaults ?? {}, JSON.parse(params._defaults)); } catch { /* ignore */ }
+  }
+  if (parsed?.params) {
+    for (const [key, val] of Object.entries(params)) {
+      if (!key.startsWith('_ps_')) continue;
+      const paramKey = key.slice(4);
+      if (!parsed.params[paramKey]) continue;
+      try { parsed.params[paramKey].style = deepMerge(parsed.params[paramKey].style ?? {}, JSON.parse(val)); } catch { /* ignore */ }
+    }
+  }
 
   // Resolve numeric palette references in param defaults before Zod validation
   const palette: string[] = parsed?.palette ?? [];
