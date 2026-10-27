@@ -10,10 +10,12 @@ function extractMeta(html: string): Record<string, string> {
   let m: RegExpExecArray | null;
   while ((m = metaRe.exec(head)) !== null) {
     const attr = m[1];
-    const nameM = /(?:property|name)\s*=\s*["']([^"']+)["']/i.exec(attr);
-    const contentM = /content\s*=\s*["']([^"']*?)["']/i.exec(attr);
-    if (nameM && contentM) {
-      data[nameM[1]] = contentM[1];
+    const nameM = /(?:property|name)\s*=\s*(?:"([^"]+)"|'([^']+)')/i.exec(attr);
+    const contentM = /content\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(attr);
+    const nameVal = nameM?.[1] ?? nameM?.[2];
+    const contentVal = contentM?.[1] ?? contentM?.[2];
+    if (nameVal != null && contentVal != null) {
+      data[nameVal] = contentVal;
     }
   }
 
@@ -36,6 +38,20 @@ export async function POST(req: NextRequest): Promise<Response> {
       { error: 'URL must start with http:// or https://' },
       { status: 400 }
     );
+  }
+
+  // Block SSRF: reject private/loopback hostnames and IPs
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    return Response.json({ error: 'Invalid URL' }, { status: 400 });
+  }
+  const hostname = parsedUrl.hostname.toLowerCase();
+  const isDev = process.env.NODE_ENV !== 'production';
+  const ssrfPattern = /^(localhost|.*\.local|.*\.internal)$|^(127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.|169\.254\.|::1|fd[0-9a-f]{2}:)/i;
+  if (ssrfPattern.test(hostname) && !(isDev && hostname === 'localhost')) {
+    return Response.json({ error: 'URL not allowed' }, { status: 400 });
   }
 
   try {

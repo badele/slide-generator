@@ -26,6 +26,7 @@ function copyStyleDef(style?: StyleDef): StyleDef {
 
 interface Props {
   templates: TemplateInfo[];
+  initialParams?: Record<string, string>;
 }
 
 type Tab = 'template' | 'free' | 'og' | 'images';
@@ -124,19 +125,29 @@ element:
                 children: "{{ subtitle }}"
 `;
 
-export function Playground({ templates }: Props) {
+export function Playground({ templates, initialParams }: Props) {
+  const initialTpl = initialParams?.template
+    ? (templates.find(t => t.name === initialParams.template) ?? templates[0])
+    : templates[0];
+
   const [tab, setTab] = useState<Tab>('template');
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateInfo | null>(
-    templates[0] ?? null
+    initialTpl ?? null
   );
   const [params, setParams] = useState<Record<string, string>>(() => {
-    const tpl = templates[0];
+    const tpl = initialTpl;
     if (!tpl) return {};
     const palette = tpl.palette ?? [];
     const defaults: Record<string, string> = {};
     for (const [key, def] of Object.entries(tpl.params)) {
       const d = def.default;
       defaults[key] = typeof d === 'number' ? (palette[d - 1] ?? String(d)) : (d ?? '');
+    }
+    if (initialParams) {
+      const { template: _t, ...rest } = initialParams;
+      for (const [k, v] of Object.entries(rest)) {
+        if (k in defaults) defaults[k] = v;
+      }
     }
     return defaults;
   });
@@ -147,6 +158,11 @@ export function Playground({ templates }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [copyToFreeLoading, setCopyToFreeLoading] = useState(false);
+  const [ogFields, setOgFields] = useState({
+    title: initialParams?._og_title ?? '',
+    description: initialParams?._og_description ?? '',
+    url: initialParams?._og_url ?? '',
+  });
   const [ogUrl, setOgUrl] = useState('');
   const [ogData, setOgData] = useState<Record<string, string> | null>(null);
   const [ogError, setOgError] = useState<string | null>(null);
@@ -157,16 +173,17 @@ export function Playground({ templates }: Props) {
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const dragStartWidth = useRef(0);
+  const pendingInitialParams = useRef(initialParams);
 
   const [baseYaml, setBaseYaml] = useState('');
   const [currentPalette, setCurrentPalette] = useState<string[]>(
-    () => [...(templates[0]?.palette ?? [])]
+    () => [...(initialTpl?.palette ?? [])]
   );
   const [currentDefaults, setCurrentDefaults] = useState<StyleDef>(
-    () => copyStyleDef(templates[0]?.defaults)
+    () => copyStyleDef(initialTpl?.defaults)
   );
   const [currentParamStyles, setCurrentParamStyles] = useState<Record<string, StyleDef>>(() => {
-    const tpl = templates[0];
+    const tpl = initialTpl;
     if (!tpl) return {};
     const styles: Record<string, StyleDef> = {};
     for (const [key, def] of Object.entries(tpl.params)) {
@@ -274,6 +291,14 @@ export function Playground({ templates }: Props) {
         ? (palette[d - 1] ?? String(d))
         : (d ?? '');
     }
+    const initP = pendingInitialParams.current;
+    if (initP) {
+      pendingInitialParams.current = undefined;
+      const { template: _t, ...rest } = initP;
+      for (const [k, v] of Object.entries(rest)) {
+        if (k in defaults) defaults[k] = v;
+      }
+    }
     setParams(defaults);
     setCurrentPalette([...(selectedTemplate.palette ?? [])]);
     setCurrentDefaults(copyStyleDef(selectedTemplate.defaults));
@@ -293,8 +318,8 @@ export function Playground({ templates }: Props) {
       .catch(() => setBaseYaml(''));
   }, [selectedTemplate]);
 
-  // Build preview URL for template mode
-  const buildTemplateUrl = useCallback(() => {
+  // Build image URL (template params only — OG fields have no effect on the image)
+  const buildImageUrl = useCallback(() => {
     if (!selectedTemplate) return null;
     const q = new URLSearchParams({ template: selectedTemplate.name });
     for (const [k, v] of Object.entries(params)) {
@@ -302,6 +327,19 @@ export function Playground({ templates }: Props) {
     }
     return `/api/generate?${q.toString()}`;
   }, [selectedTemplate, params]);
+
+  // Build /view URL for sharing (includes OG metadata fields)
+  const buildViewUrl = useCallback(() => {
+    if (!selectedTemplate) return null;
+    const q = new URLSearchParams({ template: selectedTemplate.name });
+    for (const [k, v] of Object.entries(params)) {
+      if (v) q.set(k, v);
+    }
+    if (ogFields.title)       q.set('_og_title', ogFields.title);
+    if (ogFields.description) q.set('_og_description', ogFields.description);
+    if (ogFields.url)         q.set('_og_url', ogFields.url);
+    return `/view?${q.toString()}`;
+  }, [selectedTemplate, params, ogFields]);
 
   // Validate and preview for free mode
   const validateYaml = useCallback(
@@ -331,13 +369,20 @@ export function Playground({ templates }: Props) {
     [params]
   );
 
-  // Update preview: template mode without edits and no large params → immediate GET URL
+  const hasNoOgFields = useMemo(
+    () => !ogFields.title && !ogFields.description && !ogFields.url,
+    [ogFields]
+  );
+
+  // Update preview: template mode without edits and no large params → debounced GET URL
   useEffect(() => {
-    if (tab === 'template' && !hasEdits && !hasLargeParams) {
-      setPreviewUrl(buildTemplateUrl());
+    if (tab !== 'template' || hasEdits || hasLargeParams) return;
+    const timer = setTimeout(() => {
+      setPreviewUrl(buildImageUrl());
       if (isMobile) setMobilePanel('preview');
-    }
-  }, [tab, hasEdits, hasLargeParams, buildTemplateUrl, isMobile]);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [tab, hasEdits, hasLargeParams, buildImageUrl, isMobile]);
 
   // Update preview: template mode with edits OR large params → debounced POST
   useEffect(() => {
@@ -402,7 +447,7 @@ export function Playground({ templates }: Props) {
 
   const handleCopyUrl = () => {
     if (tab === 'template') {
-      const url = buildTemplateUrl();
+      const url = buildViewUrl();
       if (url) {
         navigator.clipboard.writeText(window.location.origin + url);
         setCopySuccess(true);
@@ -489,8 +534,12 @@ export function Playground({ templates }: Props) {
           {tab === 'template' && (
             <button
               onClick={handleCopyUrl}
-              disabled={hasLargeParams}
-              title={hasLargeParams ? 'URL not shareable (contains embedded image data)' : undefined}
+              disabled={hasLargeParams || hasNoOgFields}
+              title={
+                hasLargeParams ? 'URL not shareable (contains embedded image data)' :
+                hasNoOgFields  ? 'Renseigner au moins un champ Open Graph' :
+                undefined
+              }
               className="px-3 py-1.5 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 rounded-md transition-colors"
             >
               {copySuccess ? '✓ Copied!' : 'Copy URL'}
@@ -601,6 +650,7 @@ export function Playground({ templates }: Props) {
                 templates={templates}
                 selected={selectedTemplate}
                 params={params}
+                ogFields={ogFields}
                 copyToFreeLoading={copyToFreeLoading}
                 hasEdits={hasEdits}
                 modifiedParamKeys={modifiedParamKeys}
@@ -609,6 +659,7 @@ export function Playground({ templates }: Props) {
                 currentParamStyles={currentParamStyles}
                 onSelect={(t) => setSelectedTemplate(t)}
                 onParamChange={(k, v) => setParams((p) => ({ ...p, [k]: v }))}
+                onOgFieldChange={(k, v) => setOgFields((f) => ({ ...f, [k]: v }))}
                 onCopyToFreeMode={handleCopyToFreeMode}
                 onPaletteChange={(palette) => {
                   setCurrentPalette(palette);
@@ -704,6 +755,7 @@ function TemplatePanel({
   templates,
   selected,
   params,
+  ogFields,
   copyToFreeLoading,
   hasEdits,
   modifiedParamKeys,
@@ -712,6 +764,7 @@ function TemplatePanel({
   currentParamStyles,
   onSelect,
   onParamChange,
+  onOgFieldChange,
   onCopyToFreeMode,
   onPaletteChange,
   onDefaultsChange,
@@ -720,6 +773,7 @@ function TemplatePanel({
   templates: TemplateInfo[];
   selected: TemplateInfo | null;
   params: Record<string, string>;
+  ogFields: { title: string; description: string; url: string };
   copyToFreeLoading: boolean;
   hasEdits: boolean;
   modifiedParamKeys: Set<string>;
@@ -728,6 +782,7 @@ function TemplatePanel({
   currentParamStyles: Record<string, StyleDef>;
   onSelect: (t: TemplateInfo) => void;
   onParamChange: (key: string, value: string) => void;
+  onOgFieldChange: (key: string, value: string) => void;
   onCopyToFreeMode: () => void;
   onPaletteChange: (palette: string[]) => void;
   onDefaultsChange: (d: StyleDef) => void;
@@ -735,6 +790,28 @@ function TemplatePanel({
 }) {
   return (
     <div className="space-y-4">
+      <div>
+        <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Open Graph</p>
+        <div className="space-y-2">
+          {[
+            { key: 'title',       label: 'Titre',        type: 'text', placeholder: 'Titre pour les réseaux sociaux' },
+            { key: 'description', label: 'Description',  type: 'text', placeholder: 'Description affichée sous le titre' },
+            { key: 'url',         label: 'URL canonique',type: 'url',  placeholder: 'https://monsite.com/article' },
+          ].map(({ key, label, type, placeholder }) => (
+            <div key={key}>
+              <label className="block text-xs text-gray-500 mb-1">{label}</label>
+              <input
+                type={type}
+                value={ogFields[key as keyof typeof ogFields]}
+                onChange={(e) => onOgFieldChange(key, e.target.value)}
+                placeholder={placeholder}
+                className="w-full bg-gray-800 border border-gray-700 text-gray-100 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:border-blue-500 placeholder-gray-600"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-xs text-gray-400 uppercase tracking-wide">Template</label>
