@@ -9,6 +9,21 @@ function deepEqual(a: any, b: any): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
+function computeStyleDelta(current: StyleDef, original: StyleDef): Partial<StyleDef> {
+  const delta: any = {};
+  if (current.fg !== undefined && current.fg !== original.fg) delta.fg = current.fg;
+  if (current.bg !== undefined && current.bg !== original.bg) delta.bg = current.bg;
+  if (current.split !== undefined && current.split !== original.split) delta.split = current.split;
+  const cFont = current.font ?? {};
+  const oFont = original.font ?? {};
+  const fontDelta: any = {};
+  if (cFont.name !== undefined && cFont.name !== oFont.name) fontDelta.name = cFont.name;
+  if (cFont.size !== undefined && cFont.size !== oFont.size) fontDelta.size = cFont.size;
+  if (cFont.weight !== undefined && cFont.weight !== oFont.weight) fontDelta.weight = cFont.weight;
+  if (Object.keys(fontDelta).length > 0) delta.font = fontDelta;
+  return delta;
+}
+
 function cleanUndefined(obj: any): any {
   if (obj === null || typeof obj !== 'object') return obj;
   if (Array.isArray(obj)) return obj.map(cleanUndefined);
@@ -292,19 +307,39 @@ export function Playground({ templates, initialParams }: Props) {
         : (d ?? '');
     }
     const initP = pendingInitialParams.current;
+    let paletteOverride: string[] | null = null;
+    let defaultsOverride: StyleDef | null = null;
+    const styleOverrides: Record<string, StyleDef> = {};
     if (initP) {
       pendingInitialParams.current = undefined;
-      const { template: _t, ...rest } = initP;
+      const { template: _t, _palette, _defaults, ...rest } = initP;
       for (const [k, v] of Object.entries(rest)) {
-        if (k in defaults) defaults[k] = v;
+        if (k.startsWith('_ps_')) {
+          const paramKey = k.slice(4);
+          try { styleOverrides[paramKey] = JSON.parse(v); } catch { /* ignore */ }
+        } else if (k.startsWith('_og_')) {
+          // skip — handled separately
+        } else if (k in defaults) {
+          defaults[k] = v;
+        }
+      }
+      if (_palette) {
+        const colors = _palette.split(',').map((s: string) => s.trim()).filter(Boolean);
+        if (colors.length > 0) paletteOverride = colors;
+      }
+      if (_defaults) {
+        try { defaultsOverride = JSON.parse(_defaults); } catch { /* ignore */ }
       }
     }
     setParams(defaults);
-    setCurrentPalette([...(selectedTemplate.palette ?? [])]);
-    setCurrentDefaults(copyStyleDef(selectedTemplate.defaults));
+    setCurrentPalette(paletteOverride ?? [...(selectedTemplate.palette ?? [])]);
+    const baseDefaults = copyStyleDef(selectedTemplate.defaults);
+    setCurrentDefaults(defaultsOverride ? { ...baseDefaults, ...defaultsOverride, font: { ...(baseDefaults.font ?? {}), ...(defaultsOverride.font ?? {}) } } : baseDefaults);
     const styles: Record<string, StyleDef> = {};
     for (const [key, def] of Object.entries(selectedTemplate.params)) {
-      styles[key] = copyStyleDef(def.style);
+      styles[key] = styleOverrides[key]
+        ? { ...copyStyleDef(def.style), ...styleOverrides[key], font: { ...(def.style?.font ?? {}), ...(styleOverrides[key].font ?? {}) } }
+        : copyStyleDef(def.style);
     }
     setCurrentParamStyles(styles);
   }, [selectedTemplate]);
@@ -328,18 +363,35 @@ export function Playground({ templates, initialParams }: Props) {
     return `/api/generate?${q.toString()}`;
   }, [selectedTemplate, params]);
 
-  // Build /view URL for sharing (includes OG metadata fields)
+  // Build /view URL for sharing (includes OG metadata fields + style overrides)
   const buildViewUrl = useCallback(() => {
     if (!selectedTemplate) return null;
     const q = new URLSearchParams({ template: selectedTemplate.name });
     for (const [k, v] of Object.entries(params)) {
       if (v) q.set(k, v);
     }
+    // Encode palette delta
+    if (!deepEqual(currentPalette, selectedTemplate.palette ?? [])) {
+      q.set('_palette', currentPalette.join(','));
+    }
+    // Encode defaults delta
+    const defaultsDelta = computeStyleDelta(currentDefaults, selectedTemplate.defaults ?? {});
+    if (Object.keys(defaultsDelta).length > 0) {
+      q.set('_defaults', JSON.stringify(defaultsDelta));
+    }
+    // Encode per-param style deltas
+    for (const [key, style] of Object.entries(currentParamStyles)) {
+      const templateStyle = selectedTemplate.params[key]?.style ?? {};
+      if (!deepEqual(style, templateStyle)) {
+        const delta = computeStyleDelta(style, templateStyle as StyleDef);
+        if (Object.keys(delta).length > 0) q.set(`_ps_${key}`, JSON.stringify(delta));
+      }
+    }
     if (ogFields.title)       q.set('_og_title', ogFields.title);
     if (ogFields.description) q.set('_og_description', ogFields.description);
     if (ogFields.url)         q.set('_og_url', ogFields.url);
     return `/view?${q.toString()}`;
-  }, [selectedTemplate, params, ogFields]);
+  }, [selectedTemplate, params, currentPalette, currentDefaults, currentParamStyles, ogFields]);
 
   // Validate and preview for free mode
   const validateYaml = useCallback(
@@ -373,6 +425,13 @@ export function Playground({ templates, initialParams }: Props) {
     () => !ogFields.title && !ogFields.description && !ogFields.url,
     [ogFields]
   );
+
+  const URL_MAX_LENGTH = 8000;
+  const urlTooLong = useMemo(() => {
+    const url = buildViewUrl();
+    if (!url) return false;
+    return url.length > URL_MAX_LENGTH;
+  }, [buildViewUrl]);
 
   // Update preview: template mode without edits and no large params → debounced GET URL
   useEffect(() => {
@@ -534,10 +593,10 @@ export function Playground({ templates, initialParams }: Props) {
           {tab === 'template' && (
             <button
               onClick={handleCopyUrl}
-              disabled={hasLargeParams || hasNoOgFields}
+              disabled={urlTooLong || hasNoOgFields}
               title={
-                hasLargeParams ? 'URL not shareable (contains embedded image data)' :
-                hasNoOgFields  ? 'Renseigner au moins un champ Open Graph' :
+                urlTooLong    ? `URL trop longue pour être partagée (> ${URL_MAX_LENGTH} caractères)` :
+                hasNoOgFields ? 'Renseigner au moins un champ Open Graph' :
                 undefined
               }
               className="px-3 py-1.5 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 rounded-md transition-colors"
