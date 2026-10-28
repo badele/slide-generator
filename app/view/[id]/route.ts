@@ -10,6 +10,15 @@ function esc(str: string): string {
     .replace(/"/g, '&quot;');
 }
 
+function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -31,6 +40,7 @@ export async function GET(
   const imageUrl = `${baseUrl}/api/generate-share/${id}`;
   const editUrl = `/?_share=${id}`;
   const title = _og_title || 'Slide';
+  const safeOgUrl = _og_url && isSafeUrl(_og_url) ? _og_url : null;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -40,7 +50,8 @@ export async function GET(
   <title>${esc(title)}</title>
   <meta property="og:title" content="${esc(title)}"/>
   ${_og_description ? `<meta property="og:description" content="${esc(_og_description)}"/>` : ''}
-  ${_og_url        ? `<meta property="og:url"         content="${esc(_og_url)}"/>` : ''}
+  ${safeOgUrl      ? `<meta property="og:url"         content="${esc(safeOgUrl)}"/>` : ''}
+  <meta name="referrer" content="no-referrer"/>
   <meta property="og:image"        content="${esc(imageUrl)}"/>
   <meta property="og:image:type"   content="image/png"/>
   <meta property="og:image:width"  content="1200"/>
@@ -58,6 +69,9 @@ export async function GET(
   </header>
   <main style="max-width:896px;margin:0 auto;padding:2rem 1.5rem">
     <img src="${esc(imageUrl)}" alt="${esc(title)}" style="width:100%;border-radius:.5rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25)"/>
+    ${safeOgUrl ? `<p style="margin-top:1rem;text-align:center;font-size:.875rem;color:#9ca3af">
+      Source&nbsp;:&nbsp;<a href="${esc(safeOgUrl)}" rel="nofollow noopener noreferrer" target="_blank" style="color:#60a5fa;text-decoration:underline">${esc(safeOgUrl)}</a>
+    </p>` : ''}
   </main>
 </body>
 </html>`;
@@ -66,6 +80,7 @@ export async function GET(
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      'Referrer-Policy': 'no-referrer',
     },
   });
 }
