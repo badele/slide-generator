@@ -37,6 +37,8 @@ const nextConfig: NextConfig = {
     '/api/templates':        ['./profiles/**/*'],
     '/api/templates/[name]': ['./profiles/**/*'],
     '/api/validate':         ['./profiles/**/*'],
+    '/view/[id]':            ['./profiles/**/*', './resources/fonts/**/*'],
+    '/api/generate-share/[id]': ['./profiles/**/*', './resources/fonts/**/*'],
   },
 };
 
