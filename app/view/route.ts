@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
 
   const { _og_title, _og_description, _og_url, ...templateParams } = params;
   const imageUrl = `${baseUrl}/api/generate?${new URLSearchParams(templateParams).toString()}`;
+  const pageUrl = `${baseUrl}/view?${request.nextUrl.searchParams.toString()}`;
   const editUrl = `/?${new URLSearchParams(params).toString()}`;
   const title = _og_title || params.title || 'Slide';
 
@@ -33,14 +34,16 @@ export async function GET(request: NextRequest) {
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>${esc(title)}</title>
-  <meta property="og:title" content="${esc(title)}"/>
+  <meta property="og:site_name"     content="Slide Generator"/>
+  <meta property="og:type"         content="website"/>
+  <meta property="og:url"          content="${esc(pageUrl)}"/>
+  <meta property="og:title"        content="${esc(title)}"/>
   ${_og_description ? `<meta property="og:description" content="${esc(_og_description)}"/>` : ''}
-  ${_og_url        ? `<meta property="og:url"         content="${esc(_og_url)}"/>` : ''}
   <meta property="og:image"        content="${esc(imageUrl)}"/>
+  ${proto === 'https' ? `<meta property="og:image:secure_url" content="${esc(imageUrl)}"/>` : ''}
   <meta property="og:image:type"   content="image/png"/>
   <meta property="og:image:width"  content="1200"/>
   <meta property="og:image:height" content="630"/>
-  <meta property="og:type"         content="website"/>
   <meta name="twitter:card"        content="summary_large_image"/>
   <meta name="twitter:title"       content="${esc(title)}"/>
   ${_og_description ? `<meta name="twitter:description" content="${esc(_og_description)}"/>` : ''}

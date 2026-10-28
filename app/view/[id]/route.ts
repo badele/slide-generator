@@ -38,6 +38,7 @@ export async function GET(
 
   const { _og_title, _og_description, _og_url } = storedParams;
   const imageUrl = `${baseUrl}/api/generate-share/${id}`;
+  const pageUrl = `${baseUrl}/view/${id}`;
   const editUrl = `/?_share=${id}`;
   const title = _og_title || 'Slide';
   const safeOgUrl = _og_url && isSafeUrl(_og_url) ? _og_url : null;
@@ -48,15 +49,17 @@ export async function GET(
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>${esc(title)}</title>
-  <meta property="og:title" content="${esc(title)}"/>
+  <meta property="og:site_name"     content="Slide Generator"/>
+  <meta property="og:type"         content="website"/>
+  <meta property="og:url"          content="${esc(pageUrl)}"/>
+  <meta property="og:title"        content="${esc(title)}"/>
   ${_og_description ? `<meta property="og:description" content="${esc(_og_description)}"/>` : ''}
-  ${safeOgUrl      ? `<meta property="og:url"         content="${esc(safeOgUrl)}"/>` : ''}
   <meta name="referrer" content="no-referrer"/>
   <meta property="og:image"        content="${esc(imageUrl)}"/>
+  ${proto === 'https' ? `<meta property="og:image:secure_url" content="${esc(imageUrl)}"/>` : ''}
   <meta property="og:image:type"   content="image/png"/>
   <meta property="og:image:width"  content="1200"/>
   <meta property="og:image:height" content="630"/>
-  <meta property="og:type"         content="website"/>
   <meta name="twitter:card"        content="summary_large_image"/>
   <meta name="twitter:title"       content="${esc(title)}"/>
   ${_og_description ? `<meta name="twitter:description" content="${esc(_og_description)}"/>` : ''}
