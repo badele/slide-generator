@@ -216,7 +216,7 @@ function parseInlineMarkup(
     element: {
       type: 'div',
       props: {
-        style: { display: 'flex', flexWrap: 'wrap', alignItems: 'baseline' },
+        style: { display: 'flex', alignItems: 'baseline' },
         children: segments
           .filter(s => s.text.length > 0)
           .map(s => ({
