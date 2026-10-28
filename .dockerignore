@@ -1,4 +1,5 @@
 .direnv
+.env.local
 background.png
 background_resized.png
 output.png

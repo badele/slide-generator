@@ -171,7 +171,7 @@ export function Playground({ templates, initialParams }: Props) {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [copySuccess, setCopySuccess] = useState<null | 'loading' | 'done' | 'error'>(null);
   const [copyToFreeLoading, setCopyToFreeLoading] = useState(false);
   const [ogFields, setOgFields] = useState({
     title: initialParams?._og_title ?? '',
@@ -344,9 +344,10 @@ export function Playground({ templates, initialParams }: Props) {
     setCurrentParamStyles(styles);
   }, [selectedTemplate]);
 
-  // Fetch raw YAML for buildModifiedYaml
+  // Fetch raw YAML for buildModifiedYaml (skip fetch if YAML is already embedded in template)
   useEffect(() => {
     if (!selectedTemplate) return;
+    if (selectedTemplate.yaml) { setBaseYaml(selectedTemplate.yaml); return; }
     fetch(`/api/templates/${selectedTemplate.name}`)
       .then(r => r.text())
       .then(setBaseYaml)
@@ -364,34 +365,44 @@ export function Playground({ templates, initialParams }: Props) {
   }, [selectedTemplate, params]);
 
   // Build /view URL for sharing (includes OG metadata fields + style overrides)
-  const buildViewUrl = useCallback(() => {
-    if (!selectedTemplate) return null;
-    const q = new URLSearchParams({ template: selectedTemplate.name });
-    for (const [k, v] of Object.entries(params)) {
-      if (v) q.set(k, v);
-    }
-    // Encode palette delta
-    if (!deepEqual(currentPalette, selectedTemplate.palette ?? [])) {
-      q.set('_palette', currentPalette.join(','));
-    }
-    // Encode defaults delta
-    const defaultsDelta = computeStyleDelta(currentDefaults, selectedTemplate.defaults ?? {});
-    if (Object.keys(defaultsDelta).length > 0) {
-      q.set('_defaults', JSON.stringify(defaultsDelta));
-    }
-    // Encode per-param style deltas
-    for (const [key, style] of Object.entries(currentParamStyles)) {
-      const templateStyle = selectedTemplate.params[key]?.style ?? {};
-      if (!deepEqual(style, templateStyle)) {
-        const delta = computeStyleDelta(style, templateStyle as StyleDef);
-        if (Object.keys(delta).length > 0) q.set(`_ps_${key}`, JSON.stringify(delta));
+  const buildFinalYaml = useCallback((): string => {
+    if (!baseYaml) return '';
+    try {
+      const parsed = yaml.load(baseYaml) as any;
+      parsed.palette = currentPalette;
+      const cleanDefs = cleanUndefined(currentDefaults);
+      if (Object.keys(cleanDefs).length > 0) parsed.defaults = cleanDefs;
+      else delete parsed.defaults;
+      for (const [key, style] of Object.entries(currentParamStyles)) {
+        if (!parsed.params?.[key]) continue;
+        const cleanStyle = cleanUndefined(style);
+        if (Object.keys(cleanStyle).length > 0) parsed.params[key].style = cleanStyle;
+        else delete parsed.params[key].style;
       }
+      for (const [key, val] of Object.entries(params)) {
+        if (!parsed.params?.[key]) continue;
+        if (val !== '') parsed.params[key].default = val;
+      }
+      return yaml.dump(parsed, { lineWidth: -1, noRefs: true, quotingType: '"' });
+    } catch {
+      return baseYaml;
     }
-    if (ogFields.title)       q.set('_og_title', ogFields.title);
-    if (ogFields.description) q.set('_og_description', ogFields.description);
-    if (ogFields.url)         q.set('_og_url', ogFields.url);
-    return `/view?${q.toString()}`;
-  }, [selectedTemplate, params, currentPalette, currentDefaults, currentParamStyles, ogFields]);
+  }, [baseYaml, currentPalette, currentDefaults, currentParamStyles, params]);
+
+  const buildFreeFinalYaml = useCallback((): string => {
+    if (!yamlText.trim()) return '';
+    if (Object.keys(freeParams).length === 0) return yamlText;
+    try {
+      const parsed = yaml.load(yamlText) as any;
+      for (const [key, val] of Object.entries(freeParams)) {
+        if (!parsed.params?.[key]) continue;
+        if (val !== '') parsed.params[key].default = val;
+      }
+      return yaml.dump(parsed, { lineWidth: -1, noRefs: true, quotingType: '"' });
+    } catch {
+      return yamlText;
+    }
+  }, [yamlText, freeParams]);
 
   // Validate and preview for free mode
   const validateYaml = useCallback(
@@ -425,13 +436,6 @@ export function Playground({ templates, initialParams }: Props) {
     () => !ogFields.title && !ogFields.description && !ogFields.url,
     [ogFields]
   );
-
-  const URL_MAX_LENGTH = 8000;
-  const urlTooLong = useMemo(() => {
-    const url = buildViewUrl();
-    if (!url) return false;
-    return url.length > URL_MAX_LENGTH;
-  }, [buildViewUrl]);
 
   // Update preview: template mode without edits and no large params → debounced GET URL
   useEffect(() => {
@@ -504,15 +508,40 @@ export function Playground({ templates, initialParams }: Props) {
     a.click();
   };
 
-  const handleCopyUrl = () => {
-    if (tab === 'template') {
-      const url = buildViewUrl();
-      if (url) {
-        navigator.clipboard.writeText(window.location.origin + url);
-        setCopySuccess(true);
-        setTimeout(() => setCopySuccess(false), 2000);
+  const handleCopyUrl = async () => {
+    if (tab !== 'template' && tab !== 'free') return;
+    setCopySuccess('loading');
+    try {
+      let templateYaml: string;
+      let overlayParams: Record<string, string>;
+      if (tab === 'free') {
+        templateYaml = yamlText;
+        overlayParams = freeParams;
+      } else {
+        templateYaml = buildModifiedYaml() || baseYaml;
+        overlayParams = params;
       }
+      if (!templateYaml) { setCopySuccess('error'); return; }
+      const shareParams: Record<string, string> = {
+        _template: templateYaml,
+        _overlay: JSON.stringify(overlayParams),
+      };
+      if (ogFields.title)       shareParams._og_title = ogFields.title;
+      if (ogFields.description) shareParams._og_description = ogFields.description;
+      if (ogFields.url)         shareParams._og_url = ogFields.url;
+      const res = await fetch('/api/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(shareParams),
+      });
+      if (!res.ok) throw new Error('share failed');
+      const { id } = await res.json();
+      await navigator.clipboard.writeText(`${window.location.origin}/view/${id}`);
+      setCopySuccess('done');
+    } catch {
+      setCopySuccess('error');
     }
+    setTimeout(() => setCopySuccess(null), 2000);
   };
 
   const handleReset = () => {
@@ -590,18 +619,14 @@ export function Playground({ templates, initialParams }: Props) {
           <span className="text-xs text-gray-500 font-mono">v2</span>
         </div>
         <div className="flex gap-2">
-          {tab === 'template' && (
+          {(tab === 'template' || tab === 'free') && (
             <button
               onClick={handleCopyUrl}
-              disabled={urlTooLong || hasNoOgFields}
-              title={
-                urlTooLong    ? `URL trop longue pour être partagée (> ${URL_MAX_LENGTH} caractères)` :
-                hasNoOgFields ? 'Renseigner au moins un champ Open Graph' :
-                undefined
-              }
+              disabled={hasNoOgFields || copySuccess === 'loading'}
+              title={hasNoOgFields ? 'Renseigner au moins un champ Open Graph' : undefined}
               className="px-3 py-1.5 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 rounded-md transition-colors"
             >
-              {copySuccess ? '✓ Copied!' : 'Copy URL'}
+              {copySuccess === 'loading' ? '...' : copySuccess === 'done' ? '✓ Copied!' : copySuccess === 'error' ? '✗ Error' : 'Copy URL'}
             </button>
           )}
           {tab === 'free' && (
@@ -744,8 +769,10 @@ export function Playground({ templates, initialParams }: Props) {
                 yamlText={yamlText}
                 params={freeParams}
                 validationError={validationError}
+                ogFields={ogFields}
                 onYamlChange={setYamlText}
                 onParamChange={(k, v) => setFreeParams((p) => ({ ...p, [k]: v }))}
+                onOgFieldChange={(k, v) => setOgFields((f) => ({ ...f, [k]: v }))}
               />
             ) : tab === 'og' ? (
               <OgInputPanel
@@ -1577,14 +1604,18 @@ function FreeModePanel({
   yamlText,
   params,
   validationError,
+  ogFields,
   onYamlChange,
   onParamChange,
+  onOgFieldChange,
 }: {
   yamlText: string;
   params: Record<string, string>;
   validationError: string | null;
+  ogFields: { title: string; description: string; url: string };
   onYamlChange: (v: string) => void;
   onParamChange: (k: string, v: string) => void;
+  onOgFieldChange: (k: string, v: string) => void;
 }) {
   const [copied, setCopied] = useState(false);
   const [paramsOpen, setParamsOpen] = useState(true);
@@ -1607,6 +1638,28 @@ function FreeModePanel({
 
   return (
     <div className="space-y-3 flex-1 flex flex-col min-h-0">
+      <div>
+        <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Open Graph</p>
+        <div className="space-y-2">
+          {[
+            { key: 'title',       label: 'Titre',        type: 'text', placeholder: 'Titre pour les réseaux sociaux' },
+            { key: 'description', label: 'Description',  type: 'text', placeholder: 'Description affichée sous le titre' },
+            { key: 'url',         label: 'URL canonique',type: 'url',  placeholder: 'https://monsite.com/article' },
+          ].map(({ key, label, type, placeholder }) => (
+            <div key={key}>
+              <label className="block text-xs text-gray-500 mb-1">{label}</label>
+              <input
+                type={type}
+                value={ogFields[key as keyof typeof ogFields]}
+                onChange={(e) => onOgFieldChange(key, e.target.value)}
+                placeholder={placeholder}
+                className="w-full bg-gray-800 border border-gray-700 text-gray-100 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:border-blue-500 placeholder-gray-600"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <p className="text-xs text-gray-400 uppercase tracking-wide">YAML Editor</p>
         <div className="flex items-center gap-2">
