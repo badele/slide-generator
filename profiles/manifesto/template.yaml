@@ -119,10 +119,6 @@ params:
         name: BarlowCondensed
         size: 128
         weight: 900
-  text_color:
-    description: Headline color
-    default: 2
-    type: color
   tagline:
     description: Tagline / subtitle at the bottom
     default: ETAT DES LIEUX
@@ -225,7 +221,6 @@ element:
                                   style:
                                     textAlign: center
                                     lineHeight: 0.95
-                                    color: "{{ text_color }}"
                                     textTransform: uppercase
                                   containerStyle:
                                     alignItems: center
