@@ -198,11 +198,11 @@ describe('expandSpecialElements — coerceStyle', () => {
 // ── expandSpecialElements — inline markup ────────────────────────────────────
 
 describe('expandSpecialElements — inline markup', () => {
-  it('[FG=N] applies palette color to the matching span', () => {
+  it('[SPAN FG=N] applies palette color to the matching span', () => {
     const palette = ['#FF0000', '#00FF00'];
     const node = {
       type: 'lines',
-      props: { style: { fontSize: 28 }, children: '[FG=1]red text[/]' },
+      props: { style: { fontSize: 28 }, children: '[SPAN FG=1]red text[/]' },
     };
     const result = expandSpecialElements(node, palette);
     // result → column div → line div → inline element div → span
@@ -221,5 +221,78 @@ describe('expandSpecialElements — inline markup', () => {
     const result = expandSpecialElements(node);
     const lineDiv = result.props.children[0];
     expect(lineDiv.props.style.justifyContent).toBe('center');
+  });
+
+  it('[SPAN FG=N] behaves like [FG=N] (explicit span alias)', () => {
+    const palette = ['#FF0000', '#00FF00'];
+    const node = {
+      type: 'lines',
+      props: { style: { fontSize: 28 }, children: '[SPAN FG=1]red text[/]' },
+    };
+    const result = expandSpecialElements(node, palette);
+    const lineDiv = result.props.children[0];
+    const inlineEl = lineDiv.props.children[0];
+    const span = inlineEl.props.children[0];
+    expect(span.props.style.color).toBe('#FF0000');
+    expect(span.props.children).toBe('red text');
+  });
+
+  it('[DIV BG=N] creates a full-width div inside the line wrapper, with flex: 1 and backgroundColor', () => {
+    const palette = ['#0D1B2A', '#FFFFFF'];
+    const node = {
+      type: 'lines',
+      props: { style: { fontSize: 28 }, children: '[DIV BG=1]Full width band[/]' },
+    };
+    const result = expandSpecialElements(node, palette);
+    const lineDiv = result.props.children[0]; // line wrapper (flex row)
+    const divEl = lineDiv.props.children[0];  // the [DIV] block
+    expect(divEl.type).toBe('div');
+    expect(divEl.props.style.flex).toBe(1);
+    expect(divEl.props.style.backgroundColor).toBe('#0D1B2A');
+  });
+
+  it('[DIV FG=N] applies color to the inner span, not the outer div', () => {
+    const palette = ['#0D1B2A', '#FFFFFF'];
+    const node = {
+      type: 'lines',
+      props: { style: { fontSize: 28 }, children: '[DIV FG=2]White text[/]' },
+    };
+    const result = expandSpecialElements(node, palette);
+    const lineDiv = result.props.children[0]; // line wrapper
+    const divEl = lineDiv.props.children[0];  // the [DIV] block
+    expect(divEl.type).toBe('div');
+    expect(divEl.props.style.color).toBeUndefined();
+    const innerSpan = divEl.props.children[0];
+    expect(innerSpan.props.style.color).toBe('#FFFFFF');
+  });
+
+  it('[DIV ALIGN=right] sets justifyContent: flex-end on the block div', () => {
+    const node = {
+      type: 'lines',
+      props: { style: { fontSize: 28 }, children: '[DIV ALIGN=right]Author[/]' },
+    };
+    const result = expandSpecialElements(node);
+    const lineDiv = result.props.children[0]; // line wrapper
+    const divEl = lineDiv.props.children[0];  // the [DIV] block
+    expect(divEl.type).toBe('div');
+    expect(divEl.props.style.justifyContent).toBe('flex-end');
+  });
+
+  it('[DIV] mixed with plain text wraps both in a flex row, DIV gets flex: 1', () => {
+    const palette = ['#0D1B2A', '#FFFFFF'];
+    const node = {
+      type: 'lines',
+      props: { style: { fontSize: 28 }, children: 'Label: [DIV BG=1]value[/]' },
+    };
+    const result = expandSpecialElements(node, palette);
+    const lineDiv = result.props.children[0]; // line wrapper (flex row)
+    const outerEl = lineDiv.props.children[0]; // outer flex container for mixed content
+    expect(outerEl.type).toBe('div');
+    expect(outerEl.props.style.display).toBe('flex');
+    const children = outerEl.props.children;
+    expect(children[0].type).toBe('span');
+    expect(children[0].props.children).toBe('Label: ');
+    expect(children[1].type).toBe('div');
+    expect(children[1].props.style.flex).toBe(1); // fills remaining horizontal space
   });
 });

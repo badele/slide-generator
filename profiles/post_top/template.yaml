@@ -61,7 +61,7 @@ params:
         weight: 900
   description:
     description: "Body text (multi-line, use [FG=N] [BG=N] [FN=name] [FS=N] [FW=N] for inline style)"
-    default: "GENERATE [FG=3 BG=1]CLEAN[/], IMPACTFUL SLIDES\nFOR YOUR SOCIAL MEDIA POSTS [FG=3 BG=1]IN SECONDS[/]"
+    default: "GENERATE [SPAN FG=3 BG=1]CLEAN[/], IMPACTFUL SLIDES\nFOR YOUR SOCIAL MEDIA POSTS [SPAN FG=3 BG=1]IN SECONDS[/]"
     type: textarea
     style:
       fg: 2

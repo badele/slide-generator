@@ -170,12 +170,14 @@ element:
 ### Inline markup (inside `lines` and `span` children)
 
 ```
-[FG=2]colored text[/]          → text in palette color 2
-[BG=1]highlighted[/]           → background in palette color 1
-[FS=48 FW=900]big bold[/]      → font-size 48, font-weight 900
-[FN=Caveat]handwriting[/]      → font-family override
-[ROT=45]rotated[/]             → rotate transform
-[ALIGN=center]centered line[/] → line-level alignment (lines only)
+[SPAN FG=2]colored text[/]          → inline span, text in palette color 2
+[SPAN BG=1]highlighted[/]           → inline span, background behind text only
+[SPAN FS=48 FW=900]big bold[/]      → inline span, font-size 48, font-weight 900
+[SPAN FN=Caveat]handwriting[/]      → inline span, font-family override
+[SPAN ROT=45]rotated[/]             → inline span, rotate transform
+[DIV BG=1]full-width band[/]        → block div, background spans full line width
+[DIV FG=2 BG=1 ALIGN=right]text[/] → block div, full-width, text right-aligned
+[ALIGN=center]centered line         → line-level alignment prefix (lines only, no [/])
 ```
 
 ### Grouping sub-params
