@@ -62,7 +62,7 @@ params:
 
   pipeline:
     description: "Pipeline steps — use [FG=N]text[/] for colors (3=green, 4=orange, 6=gray)"
-    default: "[FG=6]SPEC[/] HUMAN  ·  [FG=6]CODE[/] AI  ·  [FG=6]HUMAN XP[/] [FG=4]MEDIUM[/]  ·  [FG=6]REVIEW[/] [FG=3]HUMAN[/]"
+    default: "[SPAN FG=6]SPEC[/] HUMAN  ·  [SPAN FG=6]CODE[/] AI  ·  [SPAN FG=6]HUMAN XP[/] [SPAN FG=4]MEDIUM[/]  ·  [SPAN FG=6]REVIEW[/] [SPAN FG=3]HUMAN[/]"
     type: textarea
     style:
       fg: 5

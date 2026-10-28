@@ -158,6 +158,13 @@ function resolveStyle(
 
 type Align = 'left' | 'center' | 'right';
 
+const alignToJustify = (a: Align) =>
+  a === 'center' ? 'center' : a === 'right' ? 'flex-end' : 'flex-start';
+
+type SpanSeg = { kind: 'span'; text: string; override: Record<string, any> | null };
+type DivSeg = { kind: 'div'; text: string; divStyle: Record<string, any>; spanStyle: Record<string, any> };
+type Segment = SpanSeg | DivSeg;
+
 function parseInlineMarkup(
   text: string,
   baseStyle: Record<string, any>,
@@ -168,6 +175,10 @@ function parseInlineMarkup(
     if (!isNaN(idx) && idx >= 1 && idx <= palette.length) return palette[idx - 1];
     return null;
   };
+
+  // Convert leading/trailing spaces to non-breaking spaces to prevent CSS whitespace collapsing
+  const preserveSpaces = (s: string) =>
+    s.replace(/^( +)/, m => ' '.repeat(m.length)).replace(/( +)$/, m => ' '.repeat(m.length));
 
   // Extract leading [ALIGN=x] tag (no closing [/])
   let align: Align = 'left';
@@ -182,17 +193,24 @@ function parseInlineMarkup(
     return { element: { type: 'span', props: { style: baseStyle, children: workText } }, align };
   }
 
-  // Parse inline tags: [FG=N BG=N FN=name FS=N FW=N ROT=N]text[/]
+  // Parse inline tags: [DIV? SPAN? FG=N BG=N FN=name FS=N FW=N ROT=N ALIGN=x]text[/]
   const tagRegex = /\[([^\]\/][^\]]*)\]([\s\S]*?)\[\/\]/g;
-  const segments: Array<{ text: string; override: Record<string, any> | null }> = [];
+  const segments: Segment[] = [];
   let lastIndex = 0;
 
   for (const match of workText.matchAll(tagRegex)) {
     if (match.index! > lastIndex) {
-      segments.push({ text: workText.slice(lastIndex, match.index), override: null });
+      segments.push({ kind: 'span', text: workText.slice(lastIndex, match.index), override: null });
     }
+    const tagContent = match[1];
+    const isDivBlock = /^DIV(?:\s|$)/i.test(tagContent);
+    const isSpanExplicit = /^SPAN(?:\s|$)/i.test(tagContent);
+    const attrStr = (isDivBlock || isSpanExplicit) ? tagContent.replace(/^(?:DIV|SPAN)\s*/i, '') : tagContent;
+
     const override: Record<string, any> = {};
-    for (const prop of match[1].matchAll(/(\w+)=([^\s\]]+)/g)) {
+    let blockAlign: Align = 'left';
+
+    for (const prop of attrStr.matchAll(/(\w+)=([^\s\]]+)/g)) {
       const key = prop[1].toUpperCase();
       const val = prop[2];
       if (key === 'FG') { const c = resolveColor(val); if (c) override.color = c; }
@@ -201,15 +219,50 @@ function parseInlineMarkup(
       else if (key === 'FS') { const n = parseInt(val, 10); if (!isNaN(n)) override.fontSize = n; }
       else if (key === 'FW') { const n = parseInt(val, 10); if (!isNaN(n)) override.fontWeight = n; }
       else if (key === 'ROT') { const n = parseInt(val, 10); if (!isNaN(n)) override.transform = `rotate(${n}deg)`; }
+      else if (isDivBlock && key === 'ALIGN') { blockAlign = val.toLowerCase() as Align; }
     }
-    segments.push({ text: match[2], override });
+
+    const tagText = preserveSpaces(match[2]);
+
+    if (isDivBlock) {
+      const divStyle: Record<string, any> = { display: 'flex', flex: 1, justifyContent: alignToJustify(blockAlign) };
+      if (override.backgroundColor !== undefined) divStyle.backgroundColor = override.backgroundColor;
+      if (override.transform !== undefined) divStyle.transform = override.transform;
+
+      const spanStyle: Record<string, any> = { ...baseStyle };
+      if (override.color !== undefined) spanStyle.color = override.color;
+      if (override.fontFamily !== undefined) spanStyle.fontFamily = override.fontFamily;
+      if (override.fontSize !== undefined) spanStyle.fontSize = override.fontSize;
+      if (override.fontWeight !== undefined) spanStyle.fontWeight = override.fontWeight;
+
+      segments.push({ kind: 'div', text: tagText, divStyle, spanStyle });
+    } else {
+      segments.push({ kind: 'span', text: tagText, override });
+    }
     lastIndex = match.index! + match[0].length;
   }
-  if (lastIndex < workText.length) segments.push({ text: workText.slice(lastIndex), override: null });
+  if (lastIndex < workText.length) segments.push({ kind: 'span', text: workText.slice(lastIndex), override: null });
 
-  const hasMarkup = segments.some(s => s.override && Object.keys(s.override).length > 0);
+  const hasMarkup = segments.some(s =>
+    s.kind === 'div' || (s.kind === 'span' && s.override && Object.keys(s.override).length > 0)
+  );
   if (!hasMarkup && segments.length <= 1) {
     return { element: { type: 'span', props: { style: baseStyle, children: workText } }, align };
+  }
+
+  // Single DIV block — return directly, no outer wrapper needed
+  if (segments.length === 1 && segments[0].kind === 'div') {
+    const seg = segments[0] as DivSeg;
+    return {
+      element: {
+        type: 'div',
+        props: {
+          style: seg.divStyle,
+          children: [{ type: 'span', props: { style: seg.spanStyle, children: seg.text } }],
+        },
+      },
+      align,
+    };
   }
 
   return {
@@ -219,18 +272,26 @@ function parseInlineMarkup(
         style: { display: 'flex', alignItems: 'baseline' },
         children: segments
           .filter(s => s.text.length > 0)
-          .map(s => ({
-            type: 'span',
-            props: { style: s.override ? { ...baseStyle, ...s.override } : baseStyle, children: s.text },
-          })),
+          .map(s => {
+            if (s.kind === 'div') {
+              return {
+                type: 'div',
+                props: {
+                  style: s.divStyle,
+                  children: [{ type: 'span', props: { style: s.spanStyle, children: s.text } }],
+                },
+              };
+            }
+            return {
+              type: 'span',
+              props: { style: s.override ? { ...baseStyle, ...s.override } : baseStyle, children: s.text },
+            };
+          }),
       },
     },
     align,
   };
 }
-
-const alignToJustify = (a: Align) =>
-  a === 'center' ? 'center' : a === 'right' ? 'flex-end' : 'flex-start';
 
 export function expandSpecialElements(
   node: any,
@@ -314,11 +375,22 @@ export function expandSpecialElements(
     const doSplit = splitProp !== false && splitProp !== 'false';
 
     if (!doSplit) {
-      const { element } = parseInlineMarkup(text, { ...style, whiteSpace: 'pre-wrap' }, palette);
-      return { ...element, props: { ...element.props, style: { ...element.props.style, alignSelf: 'flex-start' } } };
+      const { element, align } = parseInlineMarkup(text, { ...style, whiteSpace: 'pre-wrap' }, palette);
+      if (align === 'left') {
+        return { ...element, props: { ...element.props, style: { ...element.props.style, alignSelf: 'flex-start' } } };
+      }
+      return {
+        type: 'div',
+        props: { style: { display: 'flex', justifyContent: alignToJustify(align) }, children: [element] },
+      };
     }
 
-    const rawLines = text.split('\n');
+    const allLines = text.split('\n');
+    const firstNonEmpty = allLines.findIndex(l => l.trim() !== '');
+    const lastNonEmpty = [...allLines].reverse().findIndex(l => l.trim() !== '');
+    const rawLines = firstNonEmpty === -1
+      ? []
+      : allLines.slice(firstNonEmpty, allLines.length - lastNonEmpty);
     const lineHeight = Number(style.fontSize ?? 28);
     return {
       type: 'div',

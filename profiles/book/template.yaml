@@ -57,7 +57,7 @@ params:
     description: Title lines — use [FS=N FW=N] for per-line size (e.g. first line smaller)
     required: true
     default: |-
-      [FS=44 FW=700]Learn About[/]
+      [SPAN FS=44 FW=700]Learn About[/]
       The
       DevOps
       Profession

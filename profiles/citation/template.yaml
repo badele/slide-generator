@@ -45,7 +45,6 @@ params:
     default: ""
     type: textarea
     style:
-      fg: 4
       font:
         name: Montserrat
         size: 26
@@ -63,7 +62,6 @@ params:
     default: "Le succès, c'est tomber sept fois et se relever huit."
     type: textarea
     style:
-      fg: 2
       font:
         name: AsapSharp
         size: 72

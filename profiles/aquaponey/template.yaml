@@ -36,7 +36,7 @@ params:
   name:
     description: Prénom ou nom de la personne
     required: true
-    default: "[Prénom]"
+    default: "[ALIGN=center]SOCIETE"
     style:
       fg: 3
       font:
@@ -111,7 +111,9 @@ element:
                   opacity: 0.9
                   marginTop: 6
                 children: "pour"
-            - type: span
+            - type: lines
               props:
                 param: name
+                containerStyle:
+                  alignSelf: stretch
                 children: "{{ name }}"
