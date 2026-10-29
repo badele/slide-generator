@@ -64,7 +64,7 @@ params:
 
   photo:
     description: "Photo de la personne disparue"
-    default: ""
+    default: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Mask_used_on_folk_ritual_Kamentsa_on_Chaquiras_indigenous_people_of_Colombia.jpg/1280px-Mask_used_on_folk_ritual_Kamentsa_on_Chaquiras_indigenous_people_of_Colombia.jpg"
     type: url
   photo_x:
     description: "Position horizontale de la photo (0–100)"
