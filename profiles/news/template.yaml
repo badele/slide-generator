@@ -139,6 +139,7 @@ element:
                 style:
                   lineHeight: 1.15
                   marginBottom: 28
+                  whiteSpace: pre-wrap
                 children: "{{ title }}"
 
             # Body
@@ -148,6 +149,7 @@ element:
                 style:
                   lineHeight: 1.5
                   marginBottom: 24
+                  whiteSpace: pre-wrap
                 children: "{{ body }}"
 
             # Author
