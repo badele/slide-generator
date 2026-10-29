@@ -635,7 +635,11 @@ export function Playground({ templates, initialParams }: Props) {
               onClick={handleCopyUrl}
               disabled={hasNoOgFields || copySuccess === 'loading'}
               title={hasNoOgFields ? 'Renseigner au moins un champ Open Graph' : undefined}
-              className="px-3 py-1.5 text-xs bg-gray-800 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed text-gray-300 rounded-md transition-colors"
+              className={`px-3 py-1.5 text-xs rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                hasNoOgFields
+                  ? 'bg-gray-800 text-gray-300'
+                  : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+              }`}
             >
               {copySuccess === 'loading' ? '...' : copySuccess === 'done' ? '✓ Copied!' : copySuccess === 'error' ? '✗ Error' : 'Copy URL'}
             </button>
