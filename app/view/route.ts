@@ -52,7 +52,10 @@ export async function GET(request: NextRequest) {
 <body style="margin:0;background:#030712;color:#f3f4f6;font-family:system-ui,sans-serif;min-height:100vh">
   <header style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;background:#111827;border-bottom:1px solid #1f2937">
     <a href="/" style="font-size:1.125rem;font-weight:600;color:#fff;text-decoration:none">Slide Generator</a>
-    <a href="${esc(editUrl)}" style="padding:.375rem .75rem;font-size:.75rem;background:#2563eb;color:#fff;border-radius:.375rem;text-decoration:none">Éditer</a>
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <a href="${esc(editUrl)}" style="padding:.375rem .75rem;font-size:.75rem;background:#1f2937;color:#d1d5db;border-radius:.375rem;text-decoration:none">Éditer</a>
+      <a href="${esc(imageUrl)}" download="${esc(title)}.png" style="padding:.375rem .75rem;font-size:.75rem;background:#2563eb;color:#fff;border-radius:.375rem;text-decoration:none">↓ PNG</a>
+    </div>
   </header>
   <main style="max-width:896px;margin:0 auto;padding:2rem 1.5rem">
     <img src="${esc(imageUrl)}" alt="${esc(title)}" style="width:100%;border-radius:.5rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25)"/>
