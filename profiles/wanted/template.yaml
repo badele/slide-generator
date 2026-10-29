@@ -1,0 +1,373 @@
+version: "1"
+name: wanted
+description: "Avis de disparition — affiche humoristique Wanted pour une personne disparue de la scène publique"
+output:
+  width: 1080
+  height: 1080
+
+fonts:
+  - family: BowlbyOneSC
+    path: "resources/fonts/BowlbyOneSC-400.ttf"
+    weight: 400
+  - family: BarlowCondensed
+    path: "resources/fonts/BarlowCondensed-900.ttf"
+    weight: 900
+  - family: BarlowCondensed
+    path: "resources/fonts/BarlowCondensed-700.ttf"
+    weight: 700
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-700.ttf"
+    weight: 700
+  - family: Montserrat
+    path: "resources/fonts/Montserrat-400.ttf"
+    weight: 400
+
+palette:
+  - "#F2E4B8" # 1 — parchemin (fond)
+  - "#3B1F0D" # 2 — brun foncé (texte / bordure)
+  - "#8B1A1A" # 3 — rouge bordeaux (WANTED / récompense)
+  - "#6B4A1A" # 4 — brun moyen (labels)
+  - "#C8A86B" # 5 — brun clair (séparateurs secondaires)
+
+defaults:
+  fg: 2
+  font:
+    name: "Montserrat"
+    size: 26
+    weight: 400
+
+params:
+  background:
+    description: "Couleur de fond (parchemin)"
+    default: 1
+    type: color
+
+  header:
+    description: "Texte d'en-tête (banderole au-dessus de WANTED)"
+    default: "—  AVIS DE DISPARITION  —"
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 18
+        weight: 700
+
+  footer:
+    description: "Texte de pied de page"
+    default: "CONTACTER LES AUTORITÉS COMPÉTENTES"
+    style:
+      fg: 4
+      font:
+        name: Montserrat
+        size: 13
+        weight: 400
+
+  photo:
+    description: "Photo de la personne disparue"
+    default: ""
+    type: url
+  photo_x:
+    description: "Position horizontale de la photo (0–100)"
+    default: "50"
+    type: number
+    group: photo
+  photo_y:
+    description: "Position verticale de la photo (0–100)"
+    default: "20"
+    type: number
+    group: photo
+
+  name:
+    description: "Nom complet de la personne disparue"
+    required: true
+    default: "JOHNNY FANTÔME"
+    style:
+      fg: 3
+      font:
+        name: BarlowCondensed
+        size: 88
+        weight: 900
+
+  domain:
+    description: "Domaine d'activité : POLITIQUE, MUSIQUE, CINÉMA, SPORT…"
+    default: "POLITIQUE"
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 24
+        weight: 700
+
+  last_seen:
+    description: "Dernière apparition publique (ex: Printemps 2019)"
+    default: "Printemps 2019"
+    style:
+      fg: 2
+      font:
+        name: Montserrat
+        size: 24
+        weight: 700
+
+  details:
+    description: "Signes particuliers / traits distinctifs"
+    default: "Promesses non tenues · Discours creux"
+    type: textarea
+    style:
+      fg: 4
+      font:
+        name: Montserrat
+        size: 22
+        weight: 400
+
+  reward:
+    description: "Récompense offerte (humoristique)"
+    default: "AUCUNE"
+    style:
+      fg: 3
+      font:
+        name: BarlowCondensed
+        size: 52
+        weight: 900
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1080
+      height: 1080
+      position: relative
+    children:
+      # Fond parchemin
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1080
+          height: 1080
+
+      # Cadre extérieur (bordure épaisse)
+      - type: div
+        props:
+          style:
+            display: flex
+            position: absolute
+            top: 20
+            left: 20
+            width: 1040
+            height: 1040
+            borderWidth: 5
+            borderStyle: solid
+            borderColor: "#3B1F0D"
+
+      # Cadre intérieur (liseré fin)
+      - type: div
+        props:
+          style:
+            display: flex
+            position: absolute
+            top: 30
+            left: 30
+            width: 1020
+            height: 1020
+            borderWidth: 2
+            borderStyle: solid
+            borderColor: "#3B1F0D"
+
+      # Contenu principal
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            alignItems: stretch
+            width: 1080
+            height: 1080
+            padding: "42px 52px"
+          children:
+            # En-tête
+            - type: span
+              props:
+                param: header
+                style:
+                  letterSpacing: 4
+                  alignSelf: center
+                  whiteSpace: pre
+                children: "{{ header }}"
+
+            # Trait de séparation haut
+            - type: div
+              props:
+                style:
+                  height: 3
+                  backgroundColor: "#3B1F0D"
+                  marginTop: 7
+                  marginBottom: 2
+
+            # WANTED
+            - type: span
+              props:
+                style:
+                  fontFamily: BowlbyOneSC
+                  fontSize: 148
+                  fontWeight: 400
+                  color: "#8B1A1A"
+                  letterSpacing: 6
+                  lineHeight: 1
+                  alignSelf: center
+                children: "WANTED"
+
+            # Trait sous WANTED
+            - type: div
+              props:
+                style:
+                  height: 3
+                  backgroundColor: "#3B1F0D"
+                  marginTop: 2
+                  marginBottom: 10
+
+            # Photo
+            - type: image
+              props:
+                src: "{{ photo }}"
+                x: "{{ photo_x }}"
+                y: "{{ photo_y }}"
+                containerStyle:
+                  width: 290
+                  height: 340
+                  backgroundColor: "#C8B088"
+                  alignSelf: center
+
+            # Nom
+            - type: span
+              props:
+                param: name
+                style:
+                  textAlign: center
+                  letterSpacing: 2
+                  lineHeight: 1
+                  marginTop: 8
+                  alignSelf: center
+                children: "{{ name }}"
+
+            # Trait médian
+            - type: div
+              props:
+                style:
+                  height: 2
+                  backgroundColor: "#C8A86B"
+                  marginTop: 10
+                  marginBottom: 8
+
+            # Ligne Domaine
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 12
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: Montserrat
+                        fontSize: 22
+                        fontWeight: 700
+                        color: "#6B4A1A"
+                        width: 240
+                      children: "DOMAINE :"
+                  - type: span
+                    props:
+                      param: domain
+                      children: "{{ domain }}"
+
+            # Ligne Dernière apparition
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 12
+                  marginTop: 4
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: Montserrat
+                        fontSize: 22
+                        fontWeight: 700
+                        color: "#6B4A1A"
+                        width: 240
+                      children: "DERNIÈRE APP. :"
+                  - type: span
+                    props:
+                      param: last_seen
+                      children: "{{ last_seen }}"
+
+            # Ligne Signes particuliers
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 12
+                  marginTop: 4
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: Montserrat
+                        fontSize: 22
+                        fontWeight: 700
+                        color: "#6B4A1A"
+                        width: 240
+                      children: "SIGNES PART. :"
+                  - type: lines
+                    props:
+                      param: details
+                      style:
+                        lineHeight: 1.3
+                      children: "{{ details }}"
+
+            # Séparateur flexible (pousse le bas vers le fond)
+            - type: div
+              props:
+                style:
+                  flex: 1
+
+            # Trait bas
+            - type: div
+              props:
+                style:
+                  height: 2
+                  backgroundColor: "#C8A86B"
+                  marginBottom: 6
+
+            # Ligne Récompense
+            - type: div
+              props:
+                style:
+                  display: flex
+                  gap: 14
+                  alignItems: center
+                  alignSelf: center
+                children:
+                  - type: span
+                    props:
+                      style:
+                        fontFamily: Montserrat
+                        fontSize: 20
+                        fontWeight: 700
+                        color: "#6B4A1A"
+                        letterSpacing: 2
+                      children: "RÉCOMPENSE :"
+                  - type: span
+                    props:
+                      param: reward
+                      children: "{{ reward }}"
+
+            # Pied de page
+            - type: span
+              props:
+                param: footer
+                style:
+                  letterSpacing: 3
+                  alignSelf: center
+                  marginTop: 4
+                children: "{{ footer }}"

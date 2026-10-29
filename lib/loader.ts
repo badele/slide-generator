@@ -400,7 +400,7 @@ export function expandSpecialElements(
           if (line.trim() === '') {
             return { type: 'div', props: { style: { display: 'flex', height: lineHeight } } };
           }
-          const { element, align } = parseInlineMarkup(line, style, palette);
+          const { element, align } = parseInlineMarkup(line, { ...style, whiteSpace: 'pre-wrap' }, palette);
           return {
             type: 'div',
             props: { style: { display: 'flex', justifyContent: alignToJustify(align) }, children: [element] },
