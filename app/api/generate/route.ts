@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadTemplate, expandSpecialElements } from '@/lib/loader';
-import { loadFonts } from '@/lib/fonts';
+import { loadAllFonts } from '@/lib/fonts';
 
 export async function GET(req: Request): Promise<Response> {
   try {
@@ -21,7 +21,7 @@ export async function GET(req: Request): Promise<Response> {
     }
 
     const template = loadTemplate(templateName, params);
-    const fonts = await loadFonts(template.fonts);
+    const fonts = await loadAllFonts();
     const element = expandSpecialElements(template.element, template.palette, template.params, template.defaults);
     return new ImageResponse(element as any, {
       width: template.output.width,
@@ -52,7 +52,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     const template = loadTemplate(templateName, params);
-    const fonts = await loadFonts(template.fonts);
+    const fonts = await loadAllFonts();
     const element = expandSpecialElements(template.element, template.palette, template.params, template.defaults);
     return new ImageResponse(element as any, {
       width: template.output.width,

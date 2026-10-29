@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
     '/api/validate':         ['./profiles/**/*'],
     '/view/[id]':            ['./profiles/**/*', './resources/fonts/**/*'],
     '/api/generate-share/[id]': ['./profiles/**/*', './resources/fonts/**/*'],
+    '/api/font-file/[filename]': ['./resources/fonts/**/*'],
+    '/':                         ['./fonts.yaml'],
   },
 };
 

@@ -78,5 +78,6 @@ export interface TemplateInfo {
   palette: string[];
   defaults?: StyleDef;
   output: { width: number; height: number };
+  fonts?: FontDef[];
   yaml?: string;
 }

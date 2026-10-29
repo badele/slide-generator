@@ -25,3 +25,12 @@ fonts:
   - family: VT323
     weights: [400]
     styles: [normal]
+  - family: Bungee
+    weights: [400]
+    styles: [normal]
+  - family: Audiowide
+    weights: [400]
+    styles: [normal]
+  - family: Russo One
+    weights: [400]
+    styles: [normal]
