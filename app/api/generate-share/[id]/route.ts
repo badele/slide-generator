@@ -1,7 +1,7 @@
 import { type NextRequest } from 'next/server';
 import { loadShare } from '@/lib/share-store';
 import { parseTemplate, expandSpecialElements } from '@/lib/loader';
-import { loadFonts } from '@/lib/fonts';
+import { loadAllFonts } from '@/lib/fonts';
 import { ImageResponse } from 'next/og';
 
 export async function GET(
@@ -22,7 +22,7 @@ export async function GET(
     try { overlay = _overlay ? JSON.parse(_overlay) : {}; } catch { /* ignore */ }
     const template = parseTemplate(_template, overlay);
 
-    const fonts = await loadFonts(template.fonts);
+    const fonts = await loadAllFonts();
     const element = expandSpecialElements(template.element, template.palette, template.params, template.defaults);
     return new ImageResponse(element as any, {
       width: template.output.width,

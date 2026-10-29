@@ -1,5 +1,6 @@
 import { Playground } from '@/components/Playground';
-import type { TemplateInfo } from '@/lib/types';
+import GalleryPage from '@/components/GalleryPage';
+import type { TemplateInfo, FontDef } from '@/lib/types';
 
 async function getTemplates(): Promise<TemplateInfo[]> {
   try {
@@ -18,6 +19,7 @@ async function getTemplates(): Promise<TemplateInfo[]> {
           palette: template.palette ?? [],
           defaults: template.defaults,
           output: template.output,
+          fonts: template.fonts,
         });
       } catch {
         // Skip invalid templates
@@ -34,7 +36,16 @@ export default async function Home({
 }: {
   searchParams: Promise<Record<string, string>>;
 }) {
-  const [templates, rawParams] = await Promise.all([getTemplates(), searchParams]);
+  const { listAllFontDefs } = await import('@/lib/fonts');
+  const [templates, rawParams, allFontDefs] = await Promise.all([
+    getTemplates(),
+    searchParams,
+    Promise.resolve(listAllFontDefs()),
+  ]);
+
+  if (!rawParams.template && !rawParams._share) {
+    return <GalleryPage templates={templates} />;
+  }
 
   let initialParams: Record<string, string> = rawParams;
 
@@ -54,6 +65,7 @@ export default async function Home({
           palette: parsed.palette ?? [],
           defaults: parsed.defaults,
           output: parsed.output,
+          fonts: parsed.fonts,
           yaml: stored._template,
         };
         templates.unshift(customTemplate);
@@ -68,5 +80,5 @@ export default async function Home({
     }
   }
 
-  return <Playground templates={templates} initialParams={initialParams} />;
+  return <Playground templates={templates} initialParams={initialParams} availableFonts={allFontDefs} />;
 }

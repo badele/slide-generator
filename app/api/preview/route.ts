@@ -1,5 +1,5 @@
 import { loadTemplate, parseTemplate, expandSpecialElements } from '@/lib/loader';
-import { loadFonts } from '@/lib/fonts';
+import { loadAllFonts } from '@/lib/fonts';
 import { ImageResponse } from 'next/og';
 
 // GET /api/preview?template=simple&title=Hello  → PNG (alias of /api/generate)
@@ -20,7 +20,7 @@ export async function GET(req: Request): Promise<Response> {
 
   try {
     const template = loadTemplate(templateName, params);
-    const fonts = await loadFonts(template.fonts);
+    const fonts = await loadAllFonts();
     const element = expandSpecialElements(template.element, template.palette, template.params, template.defaults);
     return new ImageResponse(element as any, {
       width: template.output.width,
@@ -45,7 +45,7 @@ export async function POST(req: Request): Promise<Response> {
     };
 
     const template = parseTemplate(yamlStr, params);
-    const fonts = await loadFonts(template.fonts);
+    const fonts = await loadAllFonts();
     const element = expandSpecialElements(template.element, template.palette, template.params, template.defaults);
     return new ImageResponse(element as any, {
       width: template.output.width,

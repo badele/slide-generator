@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef, useMemo, type ReactNode } from 'react';
-import type { TemplateInfo, ParamDef, StyleDef } from '@/lib/types';
+import type { TemplateInfo, ParamDef, StyleDef, FontDef } from '@/lib/types';
 import { YamlEditor } from './YamlEditor';
+import { FontSelect } from './FontSelect';
 import yaml from 'js-yaml';
 
 function deepEqual(a: any, b: any): boolean {
@@ -42,6 +43,7 @@ function copyStyleDef(style?: StyleDef): StyleDef {
 interface Props {
   templates: TemplateInfo[];
   initialParams?: Record<string, string>;
+  availableFonts?: FontDef[];
 }
 
 type Tab = 'template' | 'free' | 'og' | 'images';
@@ -140,7 +142,7 @@ element:
                 children: "{{ subtitle }}"
 `;
 
-export function Playground({ templates, initialParams }: Props) {
+export function Playground({ templates, initialParams, availableFonts = [] }: Props) {
   const initialTpl = initialParams?.template
     ? (templates.find(t => t.name === initialParams.template) ?? templates[0])
     : templates[0];
@@ -615,7 +617,7 @@ export function Playground({ templates, initialParams }: Props) {
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-3 bg-gray-900 border-b border-gray-800">
         <div className="flex items-center gap-3">
-          <span className="text-lg font-semibold text-white">Slide Generator</span>
+          <a href="/" className="text-lg font-semibold text-white hover:text-gray-300 transition-colors">Slide Generator</a>
           <span className="text-xs text-gray-500 font-mono">v2</span>
         </div>
         <div className="flex items-center gap-2">
@@ -748,6 +750,7 @@ export function Playground({ templates, initialParams }: Props) {
               <TemplatePanel
                 templates={templates}
                 selected={selectedTemplate}
+                fontEntries={availableFonts}
                 params={params}
                 ogFields={ogFields}
                 copyToFreeLoading={copyToFreeLoading}
@@ -855,6 +858,7 @@ export function Playground({ templates, initialParams }: Props) {
 function TemplatePanel({
   templates,
   selected,
+  fontEntries,
   params,
   ogFields,
   copyToFreeLoading,
@@ -873,6 +877,7 @@ function TemplatePanel({
 }: {
   templates: TemplateInfo[];
   selected: TemplateInfo | null;
+  fontEntries: FontDef[];
   params: Record<string, string>;
   ogFields: { title: string; description: string; url: string };
   copyToFreeLoading: boolean;
@@ -999,7 +1004,7 @@ function TemplatePanel({
       {selected && currentPalette.length > 0 && (
         <div>
           <p className="text-xs text-gray-400 uppercase tracking-wide mb-1.5">Defaults</p>
-          <DefaultsPanel defaults={currentDefaults} palette={currentPalette} onDefaultsChange={onDefaultsChange} />
+          <DefaultsPanel defaults={currentDefaults} palette={currentPalette} fontEntries={fontEntries} onDefaultsChange={onDefaultsChange} />
         </div>
       )}
 
@@ -1035,6 +1040,7 @@ function TemplatePanel({
                           isValueModified={modifiedParamKeys.has(k)}
                           onChange={(v) => onParamChange(k, v)}
                           onStyleChange={(s) => onParamStyleChange(k, s)}
+                          fontEntries={fontEntries}
                           compact
                         />
                       </div>
@@ -1057,6 +1063,7 @@ function TemplatePanel({
                   isValueModified={modifiedParamKeys.has(key)}
                   onChange={(v) => onParamChange(key, v)}
                   onStyleChange={(s) => onParamStyleChange(key, s)}
+                  fontEntries={fontEntries}
                   subParams={subParamEntries}
                   subValues={Object.fromEntries(subParamEntries.map(([k]) => [k, params[k] ?? '']))}
                   onSubParamChange={(k, v) => onParamChange(k, v)}
@@ -1081,6 +1088,7 @@ function ParamField({
   onChange,
   onStyleChange,
   compact = false,
+  fontEntries = [],
   subParams = [],
   subValues = {},
   onSubParamChange,
@@ -1095,6 +1103,7 @@ function ParamField({
   onChange: (v: string) => void;
   onStyleChange?: (style: StyleDef) => void;
   compact?: boolean;
+  fontEntries?: FontDef[];
   subParams?: Array<[string, ParamDef]>;
   subValues?: Record<string, string>;
   onSubParamChange?: (key: string, value: string) => void;
@@ -1224,6 +1233,7 @@ function ParamField({
                         def={d}
                         value={subValues[k] ?? ''}
                         palette={palette}
+                        fontEntries={fontEntries}
                         onChange={(v) => onSubParamChange?.(k, v)}
                         compact
                       />
@@ -1239,6 +1249,7 @@ function ParamField({
               currentStyle={currentStyle ?? def.style}
               defaults={templateDefaults}
               palette={palette}
+              fontEntries={fontEntries}
               onStyleChange={onStyleChange}
             />
           )}
@@ -1253,10 +1264,12 @@ function ParamField({
 function DefaultsPanel({
   defaults,
   palette,
+  fontEntries = [],
   onDefaultsChange,
 }: {
   defaults: StyleDef;
   palette: string[];
+  fontEntries?: FontDef[];
   onDefaultsChange: (d: StyleDef) => void;
 }) {
   const weightOptions = [100, 200, 300, 400, 500, 600, 700, 800, 900];
@@ -1288,11 +1301,11 @@ function DefaultsPanel({
         </div>
         <div className="flex items-center gap-1">
           <span className="text-gray-500">font</span>
-          <input
-            type="text"
+          <FontSelect
             value={defaults.font?.name ?? ''}
-            onChange={(e) => updateFont({ name: e.target.value || undefined })}
-            className={`${inputClass} w-32`}
+            fonts={fontEntries}
+            onChange={(name) => updateFont({ name })}
+            className="w-36"
           />
         </div>
         <div className="flex items-center gap-1">
@@ -1327,12 +1340,14 @@ function StyleInfoPanel({
   currentStyle,
   defaults,
   palette,
+  fontEntries = [],
   onStyleChange,
 }: {
   originalStyle: StyleDef;
   currentStyle: StyleDef;
   defaults?: StyleDef;
   palette: string[];
+  fontEntries?: FontDef[];
   onStyleChange?: (style: StyleDef) => void;
 }) {
   const td = defaults ?? {};
@@ -1400,12 +1415,12 @@ function StyleInfoPanel({
         <span className={`w-10 shrink-0 ${isOverridden(ps.font?.name, td.font?.name) ? 'text-amber-400' : 'text-gray-500'}`}>
           {isOverridden(ps.font?.name, td.font?.name) && <span className="mr-0.5 opacity-60">✱</span>}font
         </span>
-        <input
-          type="text"
+        <FontSelect
           value={ps.font?.name ?? ''}
           placeholder={td.font?.name ?? ''}
-          onChange={(e) => updateFont({ name: e.target.value || undefined })}
-          className={`${inputClass} w-36`}
+          fonts={fontEntries}
+          onChange={(name) => updateFont({ name })}
+          className="w-36"
         />
       </div>
 
