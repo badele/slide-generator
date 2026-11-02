@@ -14,11 +14,11 @@ export async function GET(req: NextRequest) {
   if (auth === 'missing') return Response.json({ error: 'Admin not configured' }, { status: 503 });
   if (auth === 'unauthorized') return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const ids = await listShares();
+  const metas = await listShares();
   const proto = req.headers.get('x-forwarded-proto') ?? 'http';
   const host = req.headers.get('host') ?? 'localhost:3000';
   const base = process.env.APP_URL ?? `${proto}://${host}`;
-  const shares = ids.map((id) => ({ id, view: `${base}/view/${id}` }));
+  const shares = metas.map(({ id, createdAt }) => ({ id, createdAt, view: `${base}/view/${id}` }));
   return Response.json({ count: shares.length, shares });
 }
 
