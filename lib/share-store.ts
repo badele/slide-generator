@@ -36,3 +36,39 @@ export async function loadShare(id: string): Promise<Record<string, string> | nu
     return await redis.get<Record<string, string>>(`share:${id}`);
   }
 }
+
+export async function listShares(): Promise<string[]> {
+  if (!useUpstash()) {
+    const { readdirSync, existsSync } = await import('fs');
+    const { join } = await import('path');
+    const dir = join(process.cwd(), 'shares');
+    if (!existsSync(dir)) return [];
+    return readdirSync(dir)
+      .filter((f) => f.endsWith('.json'))
+      .map((f) => f.slice(0, -5));
+  } else {
+    const { Redis } = await import('@upstash/redis');
+    const redis = new Redis({ url: process.env.KV_REST_API_URL!, token: process.env.KV_REST_API_TOKEN! });
+    const ids: string[] = [];
+    let cursor = 0;
+    do {
+      const [next, keys] = await redis.scan(cursor, { match: 'share:*', count: 100 });
+      cursor = Number(next);
+      for (const key of keys) ids.push((key as string).replace(/^share:/, ''));
+    } while (cursor !== 0);
+    return ids;
+  }
+}
+
+export async function deleteShare(id: string): Promise<void> {
+  if (!useUpstash()) {
+    const { unlinkSync, existsSync } = await import('fs');
+    const { join } = await import('path');
+    const file = join(process.cwd(), 'shares', `${id}.json`);
+    if (existsSync(file)) unlinkSync(file);
+  } else {
+    const { Redis } = await import('@upstash/redis');
+    const redis = new Redis({ url: process.env.KV_REST_API_URL!, token: process.env.KV_REST_API_TOKEN! });
+    await redis.del(`share:${id}`);
+  }
+}

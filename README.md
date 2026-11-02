@@ -224,6 +224,50 @@ The web UI at `http://localhost:3000` provides:
 
 ---
 
+## Modération (admin)
+
+L'endpoint `/api/admin/shares` permet de lister et supprimer les affiches publiées. Il est protégé par un token secret défini dans `.env.local`.
+
+### Configuration
+
+Ajoutez ces variables dans `.env.local` et dans les variables d'environnement Vercel :
+
+```env
+ADMIN_SECRET="votre-token-secret"   # token d'authentification (requis)
+APP_URL="https://votre-domaine.com" # optionnel — déduit automatiquement du host de la requête
+```
+
+Pour générer un token sécurisé :
+
+```bash
+just admin-gen-token
+```
+
+### Commandes
+
+```bash
+just admin-list                    # Lister toutes les affiches avec leurs liens
+just admin-delete 0cfe97acc8ecb728 # Supprimer une affiche par son ID (16 hex)
+```
+
+### API directe
+
+```bash
+# Lister
+curl -H "Authorization: Bearer <ADMIN_SECRET>" https://votre-domaine.com/api/admin/shares
+
+# Supprimer
+curl -X DELETE \
+  -H "Authorization: Bearer <ADMIN_SECRET>" \
+  -H "Content-Type: application/json" \
+  -d '{"id": "0cfe97acc8ecb728"}' \
+  https://votre-domaine.com/api/admin/shares
+```
+
+Réponses d'erreur : `401` si token invalide, `503` si `ADMIN_SECRET` absent, `400` si ID invalide.
+
+---
+
 ## Development commands
 
 ```bash
@@ -240,4 +284,9 @@ just restart        # Stop + start
 just rebuild        # Force rebuild image
 just logs           # Follow container logs
 just status         # Container status
+
+# Admin
+just admin-gen-token               # Générer un token ADMIN_SECRET
+just admin-list                    # Lister toutes les affiches publiées
+just admin-delete 0cfe97acc8ecb728 # Supprimer une affiche par son ID
 ```

@@ -1,6 +1,7 @@
 #!/usr/bin/env just -f
 
 set export
+set dotenv-filename := ".env.local"
 
 # This help
 @help:
@@ -105,6 +106,29 @@ logs SERVICE="":
 [group('docker')]
 @ps:
     docker compose ps
+
+###############################################################################
+# Admin
+###############################################################################
+
+# Générer un token sécurisé pour ADMIN_SECRET
+[group('admin')]
+@admin-gen-token:
+    openssl rand -hex 32
+
+# Lister toutes les affiches publiées (avec leurs liens de visualisation)
+[group('admin')]
+admin-list:
+    curl -s -H "Authorization: Bearer ${ADMIN_SECRET}" ${APP_URL}/api/admin/shares | jq .
+
+# Supprimer une affiche par son ID (ex: just admin-delete 0cfe97acc8ecb728)
+[group('admin')]
+admin-delete ID:
+    curl -s -X DELETE \
+      -H "Authorization: Bearer ${ADMIN_SECRET}" \
+      -H "Content-Type: application/json" \
+      -d '{"id": "{{ ID }}"}' \
+      ${APP_URL}/api/admin/shares | jq .
 
 ###############################################################################
 # CI / Utils
