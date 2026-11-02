@@ -15,4 +15,4 @@ node_modules/
 resources/fonts/*
 
 # Local share store (dev only — production uses Vercel KV)
-shares/
+/shares/
