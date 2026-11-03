@@ -1,5 +1,10 @@
 import crypto from 'crypto';
 
+export interface ShareMeta {
+  id: string;
+  createdAt: string | null;
+}
+
 export function computeShareId(params: Record<string, string>): string {
   const canonical = JSON.stringify(Object.fromEntries(Object.entries(params).sort()));
   return crypto.createHash('sha256').update(canonical).digest('hex').slice(0, 16);
@@ -10,16 +15,17 @@ function useUpstash(): boolean {
 }
 
 export async function saveShare(id: string, params: Record<string, string>): Promise<void> {
+  const data = { ...params, _created_at: new Date().toISOString() };
   if (!useUpstash()) {
     const { writeFileSync, mkdirSync } = await import('fs');
     const { join } = await import('path');
     const dir = join(process.cwd(), 'shares');
     mkdirSync(dir, { recursive: true });
-    writeFileSync(join(dir, `${id}.json`), JSON.stringify(params), 'utf8');
+    writeFileSync(join(dir, `${id}.json`), JSON.stringify(data), 'utf8');
   } else {
     const { Redis } = await import('@upstash/redis');
     const redis = new Redis({ url: process.env.KV_REST_API_URL!, token: process.env.KV_REST_API_TOKEN! });
-    await redis.set(`share:${id}`, params);
+    await redis.set(`share:${id}`, data);
   }
 }
 
@@ -37,15 +43,19 @@ export async function loadShare(id: string): Promise<Record<string, string> | nu
   }
 }
 
-export async function listShares(): Promise<string[]> {
+export async function listShares(): Promise<ShareMeta[]> {
   if (!useUpstash()) {
-    const { readdirSync, existsSync } = await import('fs');
+    const { readdirSync, existsSync, statSync } = await import('fs');
     const { join } = await import('path');
     const dir = join(process.cwd(), 'shares');
     if (!existsSync(dir)) return [];
     return readdirSync(dir)
       .filter((f) => f.endsWith('.json'))
-      .map((f) => f.slice(0, -5));
+      .map((f) => ({
+        id: f.slice(0, -5),
+        createdAt: new Date(statSync(join(dir, f)).mtimeMs).toISOString(),
+      }))
+      .sort((a, b) => b.createdAt!.localeCompare(a.createdAt!));
   } else {
     const { Redis } = await import('@upstash/redis');
     const redis = new Redis({ url: process.env.KV_REST_API_URL!, token: process.env.KV_REST_API_TOKEN! });
@@ -56,7 +66,21 @@ export async function listShares(): Promise<string[]> {
       cursor = Number(next);
       for (const key of keys) ids.push((key as string).replace(/^share:/, ''));
     } while (cursor !== 0);
-    return ids;
+    if (ids.length === 0) return [];
+    const pipeline = redis.pipeline();
+    for (const id of ids) pipeline.get(`share:${id}`);
+    const results = await pipeline.exec();
+    return ids
+      .map((id, i) => {
+        const data = results[i] as Record<string, string> | null;
+        return { id, createdAt: data?._created_at ?? null };
+      })
+      .sort((a, b) => {
+        if (!a.createdAt && !b.createdAt) return 0;
+        if (!a.createdAt) return 1;
+        if (!b.createdAt) return -1;
+        return b.createdAt.localeCompare(a.createdAt);
+      });
   }
 }
 
