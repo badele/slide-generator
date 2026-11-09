@@ -1,0 +1,195 @@
+version: "1"
+name: opentowork
+description: Open To Work — fond vert LinkedIn avec titre impactful et badge #opentowork
+output:
+  width: 1200
+  height: 675
+
+fonts:
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-900.ttf
+    weight: 900
+  - family: BarlowCondensed
+    path: resources/fonts/BarlowCondensed-700.ttf
+    weight: 700
+
+palette:
+  - "#4B7A25"  # 1 — vert LinkedIn (fond)
+  - "#F0EBE0"  # 2 — crème (texte)
+  - "#FFFFFF"  # 3 — blanc
+  - "#000000"  # 4 — noir
+
+defaults:
+  fg: 2
+  font:
+    name: BarlowCondensed
+    size: 32
+    weight: 700
+
+params:
+  background:
+    description: Couleur de fond (vert LinkedIn)
+    default: 1
+    type: color
+
+  top_text:
+    description: Sous-titre haut (rôle recherché)
+    default: VOUS CHERCHEZ UN DEVOPS / SRE / PLATFORM ENGINEER
+    style:
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 26
+        weight: 700
+
+  main_text:
+    description: "Titre principal — utilisez \\n pour les sauts de ligne"
+    required: true
+    default: |-
+      OPEN TO
+      WORK
+    type: textarea
+    style:
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 196
+        weight: 900
+
+  bottom_text:
+    description: Texte bas (appel à l'action)
+    default: "JE SUIS DISPONIBLE, N'HÉSITEZ PAS À ME CONTACTER"
+    style:
+      fg: 2
+      font:
+        name: BarlowCondensed
+        size: 26
+        weight: 700
+
+  otw_logo:
+    description: "URL du logo #OpenToWork (optionnel, remplace le badge SVG natif)"
+    default: ""
+    type: url
+
+element:
+  type: div
+  props:
+    style:
+      display: flex
+      width: 1200
+      height: 675
+      position: relative
+    children:
+      # Fond vert plein
+      - type: background
+        props:
+          color: "{{ background }}"
+          width: 1200
+          height: 675
+
+      # Layout en colonne
+      - type: div
+        props:
+          style:
+            display: flex
+            flexDirection: column
+            width: 1200
+            height: 675
+            padding: "0 60px 24px 60px"
+          children:
+            # Sous-titre haut (centré)
+            - type: div
+              props:
+                style:
+                  display: flex
+                  alignItems: center
+                  justifyContent: center
+                  height: 70
+                children:
+                  - type: span
+                    props:
+                      param: top_text
+                      style:
+                        letterSpacing: 3
+                        textTransform: uppercase
+                      children: "{{ top_text }}"
+
+            # Titre principal (centré verticalement)
+            - type: div
+              props:
+                style:
+                  display: flex
+                  flex: 1
+                  flexDirection: column
+                  alignItems: center
+                  justifyContent: center
+                children:
+                  - type: lines
+                    props:
+                      param: main_text
+                      style:
+                        textAlign: center
+                        lineHeight: 0.9
+                        textTransform: uppercase
+                      containerStyle:
+                        alignItems: center
+                        gap: 0
+                      children: "{{ main_text }}"
+
+            # Barre basse : texte CTA + badge OTW
+            - type: div
+              props:
+                style:
+                  display: flex
+                  alignItems: center
+                  justifyContent: space-between
+                  height: 90
+                children:
+                  - type: span
+                    props:
+                      param: bottom_text
+                      style:
+                        letterSpacing: 2
+                        textTransform: uppercase
+                      children: "{{ bottom_text }}"
+                  # Badge #OpenToWork — éléments natifs (toujours lisible sur fond vert)
+                  - type: div
+                    props:
+                      style:
+                        display: flex
+                        flexDirection: column
+                        alignItems: center
+                        justifyContent: center
+                        width: 76
+                        height: 76
+                        borderRadius: 38
+                        border: "5px solid #F0EBE0"
+                        flexShrink: 0
+                      children:
+                        - type: span
+                          props:
+                            style:
+                              color: "#F0EBE0"
+                              fontSize: 11
+                              fontWeight: 900
+                              letterSpacing: 1
+                              lineHeight: 1.2
+                            children: "#OPEN"
+                        - type: span
+                          props:
+                            style:
+                              color: "#F0EBE0"
+                              fontSize: 11
+                              fontWeight: 900
+                              letterSpacing: 1
+                              lineHeight: 1.2
+                            children: "TO"
+                        - type: span
+                          props:
+                            style:
+                              color: "#F0EBE0"
+                              fontSize: 11
+                              fontWeight: 900
+                              letterSpacing: 1
+                              lineHeight: 1.2
+                            children: "WORK"
