@@ -169,7 +169,7 @@ function parseInlineMarkup(
   text: string,
   baseStyle: Record<string, any>,
   palette: string[]
-): { element: any; align: Align } {
+): { element: any; align: Align | null } {
   const resolveColor = (ref: string): string | null => {
     const idx = parseInt(ref, 10);
     if (!isNaN(idx) && idx >= 1 && idx <= palette.length) return palette[idx - 1];
@@ -180,8 +180,8 @@ function parseInlineMarkup(
   const preserveSpaces = (s: string) =>
     s.replace(/^( +)/, m => ' '.repeat(m.length)).replace(/( +)$/, m => ' '.repeat(m.length));
 
-  // Extract leading [ALIGN=x] tag (no closing [/])
-  let align: Align = 'left';
+  // Extract leading [ALIGN=x] tag (no closing [/]); null = not specified
+  let align: Align | null = null;
   let workText = text;
   const alignMatch = /^\[ALIGN=(left|center|right)\]/i.exec(workText);
   if (alignMatch) {
@@ -219,7 +219,11 @@ function parseInlineMarkup(
       else if (key === 'FS') { const n = parseInt(val, 10); if (!isNaN(n)) override.fontSize = n; }
       else if (key === 'FW') { const n = parseInt(val, 10); if (!isNaN(n)) override.fontWeight = n; }
       else if (key === 'ROT') { const n = parseInt(val, 10); if (!isNaN(n)) override.transform = `rotate(${n}deg)`; }
-      else if (isDivBlock && key === 'ALIGN') { blockAlign = val.toLowerCase() as Align; }
+      else if (key === 'ALIGN' && /^(left|center|right)$/i.test(val)) {
+        const a = val.toLowerCase() as Align;
+        if (isDivBlock) blockAlign = a;
+        else if (align === null) align = a; // ALIGN in a span tag aligns the whole line
+      }
     }
 
     const tagText = preserveSpaces(match[2]);
@@ -304,12 +308,14 @@ export function expandSpecialElements(
   // Resolve styles from param: reference if present
   let paramStyle: Record<string, any> = {};
   let paramSplit: boolean | undefined = undefined;
+  let defaultAlign: Align | undefined = templateDefaults?.align;
 
   if (node.props?.param) {
     const paramKey: string = node.props.param;
     const paramDef = paramDefs[paramKey];
     paramStyle = resolveStyle(paramDef, templateDefaults, palette);
     paramSplit = paramDef?.style?.split;
+    defaultAlign = paramDef?.style?.align ?? templateDefaults?.align;
   }
 
   if (node.type === 'image') {
@@ -375,7 +381,8 @@ export function expandSpecialElements(
     const doSplit = splitProp !== false && splitProp !== 'false';
 
     if (!doSplit) {
-      const { element, align } = parseInlineMarkup(text, { ...style, whiteSpace: 'pre-wrap' }, palette);
+      const { element, align: lineAlign } = parseInlineMarkup(text, { ...style, whiteSpace: 'pre-wrap' }, palette);
+      const align = lineAlign ?? defaultAlign ?? 'left';
       if (align === 'left') {
         return { ...element, props: { ...element.props, style: { ...element.props.style, alignSelf: 'flex-start' } } };
       }
@@ -400,11 +407,13 @@ export function expandSpecialElements(
           if (line.trim() === '') {
             return { type: 'div', props: { style: { display: 'flex', height: lineHeight } } };
           }
-          const { element, align } = parseInlineMarkup(line, { ...style, whiteSpace: 'pre-wrap' }, palette);
-          return {
-            type: 'div',
-            props: { style: { display: 'flex', justifyContent: alignToJustify(align) }, children: [element] },
-          };
+          const { element, align: lineAlign } = parseInlineMarkup(line, { ...style, whiteSpace: 'pre-wrap' }, palette);
+          const align = lineAlign ?? defaultAlign;
+          // Explicit alignment: stretch the wrapper so justifyContent works whatever the container's alignItems
+          const wrapperStyle: Record<string, any> = align
+            ? { display: 'flex', alignSelf: 'stretch', justifyContent: alignToJustify(align), textAlign: align }
+            : { display: 'flex', justifyContent: 'flex-start' };
+          return { type: 'div', props: { style: wrapperStyle, children: [element] } };
         }),
       },
     };

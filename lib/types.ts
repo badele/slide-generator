@@ -42,6 +42,7 @@ export const StyleDefSchema = z.object({
   }).optional(),
   orientation: z.number().optional(),
   split: z.boolean().optional(),
+  align: z.enum(['left', 'center', 'right']).optional(),
 });
 
 const ParamDefSchema = z.object({

@@ -296,3 +296,52 @@ describe('expandSpecialElements — inline markup', () => {
     expect(children[1].props.style.flex).toBe(1); // fills remaining horizontal space
   });
 });
+
+// ── expandSpecialElements — style align ──────────────────────────────────────
+
+describe('expandSpecialElements — style align', () => {
+  const linesNode = (children: string, containerStyle: Record<string, any> = {}) => ({
+    type: 'lines',
+    props: { param: 'text', style: { fontSize: 28 }, containerStyle, children },
+  });
+  const paramDefs = (align?: 'left' | 'center' | 'right') =>
+    ({ text: { description: '', required: false, default: '', style: align ? { align } : {} } }) as any;
+
+  it('param style.align sets justifyContent and stretches the line wrapper', () => {
+    const result = expandSpecialElements(linesNode('Hello'), [], paramDefs('center'));
+    const lineDiv = result.props.children[0];
+    expect(lineDiv.props.style.justifyContent).toBe('center');
+    expect(lineDiv.props.style.alignSelf).toBe('stretch');
+  });
+
+  it('[ALIGN=x] in text overrides param style.align', () => {
+    const result = expandSpecialElements(linesNode('[ALIGN=left]Hello\nWorld'), [], paramDefs('center'));
+    expect(result.props.children[0].props.style.justifyContent).toBe('flex-start');
+    expect(result.props.children[1].props.style.justifyContent).toBe('center');
+  });
+
+  it('ALIGN inside a span tag aligns the whole line', () => {
+    const result = expandSpecialElements(linesNode('[FG=1 FS=170 ALIGN=right]mediapart[/]'), ['#FF0000'], paramDefs('center'));
+    const lineDiv = result.props.children[0];
+    expect(lineDiv.props.style.justifyContent).toBe('flex-end');
+    expect(lineDiv.props.style.alignSelf).toBe('stretch');
+  });
+
+  it('explicit alignment stretches even when containerStyle sets alignItems: center', () => {
+    const result = expandSpecialElements(linesNode('[ALIGN=right]Hi', { alignItems: 'center' }));
+    expect(result.props.style.alignItems).toBe('center');
+    expect(result.props.children[0].props.style.alignSelf).toBe('stretch');
+    expect(result.props.children[0].props.style.justifyContent).toBe('flex-end');
+  });
+
+  it('template defaults.align is used when the param has no align', () => {
+    const result = expandSpecialElements(linesNode('Hi'), [], paramDefs(), { align: 'right' });
+    expect(result.props.children[0].props.style.justifyContent).toBe('flex-end');
+  });
+
+  it('no alignment anywhere keeps the legacy wrapper (no alignSelf)', () => {
+    const result = expandSpecialElements(linesNode('Hi'), [], paramDefs());
+    expect(result.props.children[0].props.style.alignSelf).toBeUndefined();
+    expect(result.props.children[0].props.style.justifyContent).toBe('flex-start');
+  });
+});
