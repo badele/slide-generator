@@ -115,6 +115,7 @@ params:
     type: textarea
     style:
       fg: 2
+      align: center
       font:
         name: BarlowCondensed
         size: 128
@@ -214,16 +215,17 @@ element:
                               flexDirection: column
                               justifyContent: center
                               alignItems: center
+                              paddingLeft: 10
+                              paddingRight: 10
                             children:
                               - type: lines
                                 props:
                                   param: text
                                   style:
-                                    textAlign: center
                                     lineHeight: 0.95
                                     textTransform: uppercase
                                   containerStyle:
-                                    alignItems: center
+                                    alignSelf: stretch
                                     gap: 0
                                   children: "{{ text }}"
 

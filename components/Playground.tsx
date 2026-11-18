@@ -15,6 +15,7 @@ function computeStyleDelta(current: StyleDef, original: StyleDef): Partial<Style
   if (current.fg !== undefined && current.fg !== original.fg) delta.fg = current.fg;
   if (current.bg !== undefined && current.bg !== original.bg) delta.bg = current.bg;
   if (current.split !== undefined && current.split !== original.split) delta.split = current.split;
+  if (current.align !== undefined && current.align !== original.align) delta.align = current.align;
   const cFont = current.font ?? {};
   const oFont = original.font ?? {};
   const fontDelta: any = {};
@@ -1273,6 +1274,7 @@ function DefaultsPanel({
   onDefaultsChange: (d: StyleDef) => void;
 }) {
   const weightOptions = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+  const alignOptions = ['left', 'center', 'right'] as const;
   const inputClass =
     'bg-gray-800 border border-gray-700 text-gray-100 rounded px-1.5 py-0.5 focus:outline-none focus:border-blue-500 font-mono text-[11px]';
 
@@ -1328,6 +1330,17 @@ function DefaultsPanel({
             {weightOptions.map((w) => <option key={w} value={w}>{w}</option>)}
           </select>
         </div>
+        <div className="flex items-center gap-1">
+          <span className="text-gray-500">align</span>
+          <select
+            value={defaults.align ?? ''}
+            onChange={(e) => onDefaultsChange({ ...defaults, align: (e.target.value || undefined) as StyleDef['align'] })}
+            className={inputClass}
+          >
+            <option value="">—</option>
+            {alignOptions.map((a) => <option key={a} value={a}>{a}</option>)}
+          </select>
+        </div>
       </div>
     </div>
   );
@@ -1355,6 +1368,7 @@ function StyleInfoPanel({
 
   const isOverridden = (curr: any, def: any) => curr !== undefined && curr !== def;
   const weightOptions = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+  const alignOptions = ['left', 'center', 'right'] as const;
   const inputClass =
     'bg-gray-800 border border-gray-700 text-gray-100 rounded px-1.5 py-0.5 focus:outline-none focus:border-blue-500 font-mono text-[11px]';
 
@@ -1450,6 +1464,21 @@ function StyleInfoPanel({
         >
           <option value="">—</option>
           {weightOptions.map((w) => <option key={w} value={w}>{w}</option>)}
+        </select>
+      </div>
+
+      {/* align */}
+      <div className="flex items-center gap-2">
+        <span className={`w-10 shrink-0 ${isOverridden(ps.align, td.align) ? 'text-amber-400' : 'text-gray-500'}`}>
+          {isOverridden(ps.align, td.align) && <span className="mr-0.5 opacity-60">✱</span>}align
+        </span>
+        <select
+          value={ps.align ?? ''}
+          onChange={(e) => update({ align: (e.target.value || undefined) as StyleDef['align'] })}
+          className={inputClass}
+        >
+          <option value="">{td.align ? `— (${td.align})` : '—'}</option>
+          {alignOptions.map((a) => <option key={a} value={a}>{a}</option>)}
         </select>
       </div>
 

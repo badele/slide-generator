@@ -134,6 +134,7 @@ params:
     default: "My Title"
     style:             # overrides defaults for this param
       fg: 2
+      align: center    # default line alignment: left | center | right ([ALIGN=x] in text wins)
       font:
         name: BarlowCondensed
         size: 96
